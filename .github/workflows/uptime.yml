@@ -30,11 +30,10 @@ permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
+  group: uptime
   # A check that is mid-verification must never be killed by the next tick;
-  # that turns a real alarm into silence. This workflow has no pull_request
-  # trigger, so cancel-in-progress always evaluates to false here.
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  # that turns a real alarm into silence.
+  cancel-in-progress: false
 
 jobs:
   check:
