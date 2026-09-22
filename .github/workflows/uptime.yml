@@ -30,15 +30,16 @@ permissions:
   contents: read
 
 concurrency:
-  group: uptime
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
   # A check that is mid-verification must never be killed by the next tick;
-  # that turns a real alarm into silence.
-  cancel-in-progress: false
+  # that turns a real alarm into silence. This workflow has no pull_request
+  # trigger, so cancel-in-progress always evaluates to false here.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   check:
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
+    runs-on: ${{ fromJSON(vars.CI_RUNNER || '"ubuntu-latest"') }}
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v7
         with:
