@@ -16,16 +16,20 @@ export function isServedPath(relPath) {
 // mutable release ledger, not a runtime dependency of any page: the mandatory
 // release workflow writes it only after the candidate manifest is sealed, so
 // hashing it would force a manifest rewrite on every release and cycle forever.
-// CNAME is GitHub Pages deployment metadata: Pages consumes it to bind the
-// custom domain and does not serve it (measured HTTP 404 in production), so a
-// fingerprint entry for it could never be verified against live output.
+// CNAME was excluded with the same deployment-metadata rationale — Pages
+// consumed it to bind the custom domain without serving it (measured HTTP 404
+// in production in the legacy branch-build era). That stopped being true with
+// the 2026-08-27 switch to Pages Actions: curl https://soul-trip.uk/CNAME now
+// returns HTTP 200 with the file's exact bytes (re-measured 2026-09-25), so it
+// is fingerprinted like any other served file and a custom-domain binding
+// change fails the production verifier instead of passing unverified.
 // Exact-name matching keeps every other served runtime file fingerprinted.
 // VISION.md is the repo's authority-0 document (estate convention: every repo
 // carries one at its root, written by the board, amended by the board). It is
 // prose about the project, not a runtime dependency of any page, and it lands
 // without a manifest regeneration -- the 2026-08-28 council ratification sweep
 // turned the site-contract gate red on main for exactly that reason.
-export const FINGERPRINT_EXCLUDED_FILES = ["CHANGELOG.md", "CNAME", "VISION.md"];
+export const FINGERPRINT_EXCLUDED_FILES = ["CHANGELOG.md", "VISION.md"];
 
 export function isFingerprintExcluded(relPath) {
   return FINGERPRINT_EXCLUDED_FILES.includes(relPath);

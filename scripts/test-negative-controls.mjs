@@ -895,12 +895,14 @@ await test("T44", "hostile: a manifest that still lists CHANGELOG.md fails with 
   }
 });
 
-// CNAME joins CHANGELOG.md in the fingerprint exclusion: GitHub Pages consumes it
-// as deployment metadata for the custom domain and does not serve it (measured
-// HTTP 404), so hashing it would demand an impossible live verification. These
-// controls mirror the ledger-isolation pair above for the domain record.
+// CNAME is a served fingerprinted file since the 2026-08-27 Pages Actions
+// switch (live /CNAME measured HTTP 200 with the file's exact bytes on
+// 2026-09-25). These controls prove the domain binding is unforgeable: a CNAME
+// edit stales the fingerprint, a manifest missing CNAME is rejected, and (T53
+// below) a live CNAME mismatch fails the production verifier. Each is red on
+// the old exclusion code, where CNAME edits passed every check unverified.
 
-await test("T45", "deployment-metadata isolation: mutating CNAME alone keeps the fingerprint green and generation a no-op", async () => {
+await test("T45", "fingerprinted domain binding: mutating CNAME alone stales the fingerprint and regeneration picks it up", async () => {
   const dir = await makeCopy("soultrip-negctl-cname-");
   try {
     const before = runNode("scripts/check-manifest.mjs", dir, ["--root", dir]);
@@ -910,45 +912,43 @@ await test("T45", "deployment-metadata isolation: mutating CNAME alone keeps the
       (await readFile(path.join(dir, "CNAME"), "utf8")) + "\n# hostile fixture edit (test bytes)\n"
     );
     const chk = runNode("scripts/check-manifest.mjs", dir, ["--root", dir]);
-    if (chk.status !== 0) return { pass: false, evidence: `CNAME-only edit staled the fingerprint: exit=${chk.status} ${(chk.stdout + chk.stderr).slice(0, 300)}` };
-    const mtimeBefore = (await stat(path.join(dir, "site-manifest.json"))).mtimeMs;
-    const bytesBefore = await readFile(path.join(dir, "site-manifest.json"));
-    await new Promise((r) => setTimeout(r, 20));
+    const chkOut = chk.stdout + chk.stderr;
+    if (!(chk.status === 1 && /"CNAME"/.test(chkOut))) {
+      return { pass: false, evidence: `CNAME-only edit did NOT stale the fingerprint: exit=${chk.status} ${chkOut.slice(0, 200)}` };
+    }
     const gen = runNode("scripts/generate-manifest.mjs", dir, ["--root", dir]);
-    const mtimeAfter = (await stat(path.join(dir, "site-manifest.json"))).mtimeMs;
-    const bytesAfter = await readFile(path.join(dir, "site-manifest.json"));
-    const genOut = gen.stdout + gen.stderr;
+    if (gen.status !== 0) return { pass: false, evidence: `regeneration failed: exit=${gen.status}` };
+    const rechk = runNode("scripts/check-manifest.mjs", dir, ["--root", dir]);
+    const listed = JSON.parse(await readFile(path.join(dir, "site-manifest.json"), "utf8")).files;
+    const cnameBytes = await readFile(path.join(dir, "CNAME"));
     return {
       pass:
-        chk.status === 0 &&
-        gen.status === 0 &&
-        /already up to date/.test(genOut) &&
-        bytesBefore.equals(bytesAfter) &&
-        mtimeBefore === mtimeAfter &&
-        !/"CNAME"/.test(await readFile(path.join(dir, "site-manifest.json"), "utf8")),
-      evidence: `checker exit=${chk.status}, generator exit=${gen.status} (${genOut.trim()}), manifest bytes+mtime unchanged=${bytesBefore.equals(bytesAfter) && mtimeBefore === mtimeAfter}`
+        rechk.status === 0 &&
+        listed["CNAME"] === createHash("sha256").update(cnameBytes).digest("hex"),
+      evidence: `tamper exit=${chk.status} (names CNAME), regenerate exit=${gen.status}, recheck exit=${rechk.status}`
     };
   } finally {
     await rm(dir, { recursive: true, force: true });
   }
 });
 
-await test("T46", "hostile: a manifest that still lists CNAME fails with the explicit exclusion diagnostic", async () => {
+await test("T46", "hostile: a manifest with the CNAME entry deleted fails naming it", async () => {
   const dir = await makeCopy("soultrip-negctl-cnlist-");
   try {
     const raw = await readFile(path.join(dir, "site-manifest.json"), "utf8");
     const m = JSON.parse(raw);
+    if (!m.files["CNAME"]) return { pass: false, evidence: "fixture error: manifest has no CNAME entry" };
     const files = {};
-    for (const [k, v] of Object.entries(m.files)) files[k] = v;
-    files["CNAME"] = createHash("sha256").update(await readFile(path.join(dir, "CNAME"))).digest("hex");
-    const ordered = {};
-    for (const k of Object.keys(m.files).concat("CNAME").sort()) ordered[k] = files[k];
-    await writeFile(path.join(dir, "site-manifest.json"), JSON.stringify({ algorithm: m.algorithm, files: ordered }, null, 2) + "\n");
+    for (const [k, v] of Object.entries(m.files)) {
+      if (k === "CNAME") continue;
+      files[k] = v;
+    }
+    await writeFile(path.join(dir, "site-manifest.json"), JSON.stringify({ algorithm: m.algorithm, files }, null, 2) + "\n");
     const r = runNode("scripts/check-manifest.mjs", dir, ["--root", dir]);
     return {
       pass:
         r.status === 1 &&
-        /manifest lists "CNAME" which is excluded from the deploy fingerprint/.test(r.stdout + r.stderr),
+        /served file "CNAME" is missing from the manifest/.test(r.stdout + r.stderr),
       evidence: `exit=${r.status}`
     };
   } finally {
@@ -1107,6 +1107,50 @@ await test("T52", "sabotage: Sentry failure reporting stripped from main.js → 
       evidence: `exit=${r.code}`
     };
   } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+// ===== Domain-binding verifier control (T53) =====================================
+// verify-production.mjs byte-checks every manifest entry against live output,
+// so with CNAME fingerprinted a hostile /CNAME must fail the run naming CNAME.
+// This serves a faithful mirror with only the CNAME bytes altered. Red on the
+// old exclusion code, where the verifier never requested CNAME and passed.
+
+await test("T53", "hostile origin: live /CNAME bytes differing from the manifest fail the production verifier naming CNAME", async () => {
+  const dir = await makeCopy("soultrip-negctl-cnamehost-");
+  let server;
+  try {
+    server = http.createServer(async (req, res) => {
+      try {
+        const rel = decodeURIComponent(new URL(req.url, "http://localhost").pathname).replace(/^\/+/, "") || "index.html";
+        if (rel === "CNAME") {
+          res.writeHead(200);
+          res.end("hostile-example.test\n");
+          return;
+        }
+        res.writeHead(200);
+        res.end(await readFile(path.join(dir, rel)));
+      } catch {
+        if (!res.headersSent) {
+          res.writeHead(404);
+          res.end("nf");
+        }
+      }
+    });
+    await new Promise((r) => server.listen(0, "127.0.0.1", r));
+    const port = server.address().port;
+    const r = await runNodeAsync("scripts/verify-production.mjs", dir, ["--base", `http://127.0.0.1:${port}/`, "--root", dir]);
+    const out = r.stdout + r.stderr;
+    return {
+      pass: r.status === 1 && out.includes('"CNAME"'),
+      evidence:
+        r.status !== 1
+          ? `verifier PASSED against a hostile CNAME: ${out.slice(0, 200)}`
+          : `exit=1, diagnostic names CNAME=${out.includes('"CNAME"')}`
+    };
+  } finally {
+    if (server) await new Promise((resolve) => server.close(resolve));
     await rm(dir, { recursive: true, force: true });
   }
 });
