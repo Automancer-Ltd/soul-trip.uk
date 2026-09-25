@@ -35,3 +35,5 @@ The website now includes information about this release.
 ## v2026.08.22.1 — 22 August 2026
 
 Soul Trip now uses its site icon in browser tabs and when saved to a phone’s home screen.
+
+Last verified: 2026-09-25 on automancer-vps (ls favicon.* apple-touch-icon.png images/business/; grep riyadh-skyline-night-aerial index.html)
