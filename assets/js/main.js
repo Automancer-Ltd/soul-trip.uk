@@ -171,11 +171,18 @@
 
       var data = new FormData(form);
 
-      fetch(form.action, {
+      // Bound the wait: without a timeout a stalled connection leaves the
+      // button stuck on "Sending…" and the enquiry is silently lost.
+      var fetchOptions = {
         method: "POST",
         body: data,
         headers: { Accept: "application/json" }
-      })
+      };
+      if (typeof AbortSignal !== "undefined" && typeof AbortSignal.timeout === "function") {
+        fetchOptions.signal = AbortSignal.timeout(15000);
+      }
+
+      fetch(form.action, fetchOptions)
         .then(function (response) {
           if (response.ok) {
             form.style.display = "none";
@@ -185,7 +192,14 @@
             throw new Error("Bad response");
           }
         })
-        .catch(function () {
+        .catch(function (err) {
+          // Report the failure without any visitor data so lost enquiries are
+          // visible; the Sentry guard redacts the event before it leaves.
+          if (window.Sentry && typeof window.Sentry.captureException === "function") {
+            var report = new Error("Enquiry submission failed");
+            report.name = err && err.name ? "EnquirySubmit" + err.name : "EnquirySubmitError";
+            window.Sentry.captureException(report);
+          }
           errorBox.classList.add("is-visible");
           submitBtn.disabled = false;
           submitBtn.textContent = originalText;

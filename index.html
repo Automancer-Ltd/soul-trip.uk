@@ -370,7 +370,7 @@
           <p>If you receive a like-for-like quote elsewhere, speak to our team about our <strong>Price Match Guarantee</strong> — because we aim to provide some of the most competitive prices available while still delivering a premium experience.</p>
         </div>
         <p class="price__line">Affordable. Reliable. Professional.</p>
-        <a class="btn btn--gold" href="#enquiry">Request a Quote
+        <a class="btn btn--gold" href="#enquiry?type=business%20travel" data-type="business travel">Request a Quote
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </a>
       </div>
@@ -419,6 +419,7 @@
                   <div class="field field--full">
                     <label for="type">Type of Enquiry <span class="req">*</span></label>
                     <select id="type" name="enquiry_type" data-type required>
+                      <option value="" disabled selected>Select an enquiry type</option>
                       <option value="Hajj">Hajj</option>
                       <option value="Umrah">Umrah</option>
                       <option value="Spiritual Tour">Spiritual Tour</option>

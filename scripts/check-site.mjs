@@ -23,7 +23,9 @@ const REQUIRED_JS_SNIPPETS = [
   ["submit button binding", 'document.getElementById("submit-btn")'],
   ["submit handler", 'addEventListener("submit"'],
   ["honeypot query", 'input[name="_gotcha"]'],
-  ["submit target", "fetch(form.action"]
+  ["submit target", "fetch(form.action"],
+  ["submit timeout", "AbortSignal.timeout"],
+  ["failure reporting", "captureException"]
 ];
 
 function argValue(flag) {
@@ -243,6 +245,49 @@ if (forms.length === 0) {
     for (const [label, snippet] of REQUIRED_JS_SNIPPETS) {
       if (!mainJs.includes(snippet)) fail("C3", `main.js lacks the enquiry ${label} (${snippet})`);
     }
+  }
+
+  // The enquiry type must be an explicit choice: a disabled empty placeholder
+  // first option stops unspecified enquiries silently defaulting to "Hajj".
+  const selectMatch = /<select\b[^>]*\bid="type"[^>]*>([\s\S]*?)<\/select\s*>/i.exec(indexHtml);
+  let typeOptionValues = [];
+  if (!selectMatch) {
+    fail("C3", "select#type markup not found; the enquiry-type placeholder contract is unverifiable");
+  } else {
+    const options = [...selectMatch[1].matchAll(/<option\b([^>]*)>/gi)];
+    typeOptionValues = options.map((m) => /value="([^"]*)"/i.exec(m[1])?.[1] ?? "");
+    const firstAttrs = options.length ? options[0][1] : "";
+    const firstValue = /value="([^"]*)"/i.exec(firstAttrs)?.[1];
+    if (!options.length || (firstValue ?? "") !== "" || !/\bdisabled\b/i.test(firstAttrs)) {
+      fail(
+        "C3",
+        'select#type must start with a disabled empty-value placeholder option (e.g. <option value="" disabled selected>…) so visitors choose an enquiry type explicitly'
+      );
+    }
+  }
+
+  // The "Request a Quote" CTA must deep-link to the form with a ?type= value
+  // that matches a real enquiry type, so business visitors arrive preclassified
+  // instead of as unclassified enquiries.
+  const knownTypes = typeOptionValues.map((v) => v.trim().toLowerCase()).filter(Boolean);
+  let quoteLinked = false;
+  for (const m of indexHtml.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a\s*>/gi)) {
+    if (!/Request a Quote/.test(m[2])) continue;
+    const href = /href="([^"]*)"/i.exec(m[1])?.[1] ?? "";
+    const dataType = /data-type="([^"]*)"/i.exec(m[1])?.[1] ?? "";
+    const rawParam = /[?#&]type=([^"&#\s]*)/i.exec(href)?.[1] ?? "";
+    const want = [dataType.trim().toLowerCase(), (decodeSafe(rawParam.replace(/\+/g, " ")) ?? "").trim().toLowerCase()];
+    if (!/^#enquiry\?/.test(href) || !want[0] || !knownTypes.includes(want[0]) || !want[1] || !knownTypes.includes(want[1])) {
+      fail(
+        "C3",
+        `"Request a Quote" CTA must deep-link like href="#enquiry?type=…" with a data-type matching a real enquiry type (found href="${href}" data-type="${dataType}")`
+      );
+    } else {
+      quoteLinked = true;
+    }
+  }
+  if (!quoteLinked) {
+    fail("C3", '"Request a Quote" CTA with a valid ?type= deep link is missing from index.html');
   }
 }
 
