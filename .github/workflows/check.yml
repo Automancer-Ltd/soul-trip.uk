@@ -15,7 +15,12 @@ name: site-contract
 #
 # Pages source was switched from "Deploy from a branch" to "GitHub Actions" on
 # 2026-08-27 to make this possible. Reverting that setting silently restores the
-# ungated behaviour above.
+# ungated behaviour above. (Pages source re-checked: gh api
+# repos/Automancer-Ltd/soul-trip.uk/pages --jq .build_type == "workflow".)
+#
+# Last verified: 2026-09-25 on automancer-vps (scripts: node scripts/check-manifest.mjs,
+# node scripts/check-site.mjs, node scripts/verify-production.mjs --prove-verification;
+# pins: git ls-remote https://github.com/actions/<name>.git refs/tags/<v>)
 
 on:
   push:
