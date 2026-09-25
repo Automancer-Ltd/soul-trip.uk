@@ -20,7 +20,30 @@ function copyTree(src, dest) {
 async function makeCopy(prefix) {
   const dir = await mkdtemp(path.join(os.tmpdir(), prefix));
   await copyTree(REPO, dir);
+  await detachCopyRepo(dir);
   return dir;
+}
+
+// The checkout under test may itself be a linked worktree (a .git FILE
+// pointing at a shared git dir). A copied pointer makes every git command
+// inside the copy operate on the REAL index — observed 2026-09-25: T02's
+// `git rm --cached` unstaged favicon.ico and T42's `git add` staged a hostile
+// fixture in the lane's own checkout. Give each copy an independent index
+// tracking exactly the copied worktree state; full-clone copies (.git dir)
+// are already independent and left untouched.
+async function detachCopyRepo(dir) {
+  let st = null;
+  try {
+    st = await stat(path.join(dir, ".git"));
+  } catch {
+    return;
+  }
+  if (!st.isFile()) return;
+  await rm(path.join(dir, ".git"), { force: true });
+  const init = spawnSync("git", ["init"], { cwd: dir });
+  if (init.status !== 0) throw new Error(`git init failed in copy: ${init.stderr}`);
+  const add = spawnSync("git", ["add", "-A"], { cwd: dir });
+  if (add.status !== 0) throw new Error(`git add -A failed in copy: ${add.stderr}`);
 }
 
 async function walkSnapshot(dir, base = dir, acc = { files: new Map(), dirs: new Map() }) {
@@ -1015,6 +1038,75 @@ await test("T48", "hostile: an asset that 503s on every attempt still fails, nam
     };
   } finally {
     if (server) await new Promise((resolve) => server.close(resolve));
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+// ===== Enquiry-reliability controls (T49+) =======================================
+// 2026-09: the enquiry form gained a submit timeout, an explicit type
+// placeholder, a classified quote CTA, and Sentry failure reporting. Each
+// control below reverts one of those and proves the C3 contract names it.
+
+await test("T49", "sabotage: enquiry-type placeholder removed (silent default to Hajj) → C3 names the placeholder", async () => {
+  const dir = await makeCopy("soultrip-negctl-typeph-");
+  try {
+    await sabotageInCopy(dir, "index.html", [
+      ['<option value="" disabled selected>Select an enquiry type</option>\n', ""]
+    ]);
+    const r = await checkSite(dir);
+    return {
+      pass: r.code === 1 && /disabled empty-value placeholder option/.test(r.out),
+      evidence: `exit=${r.code}`
+    };
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+await test("T50", "sabotage: quote CTA reverted to a bare #enquiry link → C3 names the deep link", async () => {
+  const dir = await makeCopy("soultrip-negctl-quote-");
+  try {
+    await sabotageInCopy(dir, "index.html", [
+      ['href="#enquiry?type=business%20travel" data-type="business travel">Request a Quote', 'href="#enquiry">Request a Quote']
+    ]);
+    const r = await checkSite(dir);
+    return {
+      pass: r.code === 1 && /"Request a Quote" CTA must deep-link/.test(r.out),
+      evidence: `exit=${r.code}`
+    };
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+await test("T51", "sabotage: submit timeout signal stripped from main.js → C3 names the missing timeout", async () => {
+  const dir = await makeCopy("soultrip-negctl-timeout-");
+  try {
+    await sabotageInCopy(dir, "assets/js/main.js", [
+      ['      if (typeof AbortSignal !== "undefined" && typeof AbortSignal.timeout === "function") {\n        fetchOptions.signal = AbortSignal.timeout(15000);\n      }\n', ""]
+    ]);
+    const r = await checkSite(dir);
+    return {
+      pass: r.code === 1 && /main\.js lacks the enquiry submit timeout/.test(r.out),
+      evidence: `exit=${r.code}`
+    };
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+await test("T52", "sabotage: Sentry failure reporting stripped from main.js → C3 names the missing reporting", async () => {
+  const dir = await makeCopy("soultrip-negctl-sentryrep-");
+  try {
+    await sabotageInCopy(dir, "assets/js/main.js", [
+      ['          if (window.Sentry && typeof window.Sentry.captureException === "function") {\n            var report = new Error("Enquiry submission failed");\n            report.name = err && err.name ? "EnquirySubmit" + err.name : "EnquirySubmitError";\n            window.Sentry.captureException(report);\n          }\n', ""]
+    ]);
+    const r = await checkSite(dir);
+    return {
+      pass: r.code === 1 && /main\.js lacks the enquiry failure reporting/.test(r.out),
+      evidence: `exit=${r.code}`
+    };
+  } finally {
     await rm(dir, { recursive: true, force: true });
   }
 });
