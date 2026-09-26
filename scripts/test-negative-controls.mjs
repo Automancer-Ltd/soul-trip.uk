@@ -1046,6 +1046,9 @@ await test("T48", "hostile: an asset that 503s on every attempt still fails, nam
 // 2026-09: the enquiry form gained a submit timeout, an explicit type
 // placeholder, a classified quote CTA, and Sentry failure reporting. Each
 // control below reverts one of those and proves the C3 contract names it.
+// T54 pins the AbortController fallback for browsers without
+// AbortSignal.timeout; T55 pins the honeypot path resolving to the same
+// visible success state as a real submit.
 
 await test("T49", "sabotage: enquiry-type placeholder removed (silent default to Hajj) → C3 names the placeholder", async () => {
   const dir = await makeCopy("soultrip-negctl-typeph-");
@@ -1083,11 +1086,46 @@ await test("T51", "sabotage: submit timeout signal stripped from main.js → C3 
   const dir = await makeCopy("soultrip-negctl-timeout-");
   try {
     await sabotageInCopy(dir, "assets/js/main.js", [
-      ['      if (typeof AbortSignal !== "undefined" && typeof AbortSignal.timeout === "function") {\n        fetchOptions.signal = AbortSignal.timeout(15000);\n      }\n', ""]
+      ['      if (typeof AbortSignal !== "undefined" && typeof AbortSignal.timeout === "function") {\n        fetchOptions.signal = AbortSignal.timeout(15000);\n      } else if (typeof AbortController !== "undefined") {\n        var submitAbort = new AbortController();\n        fetchOptions.signal = submitAbort.signal;\n        submitTimer = setTimeout(function () { submitAbort.abort(); }, 15000);\n      }\n', ""]
     ]);
     const r = await checkSite(dir);
     return {
       pass: r.code === 1 && /main\.js lacks the enquiry submit timeout/.test(r.out),
+      evidence: `exit=${r.code}`
+    };
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+await test("T54", "sabotage: timeout fallback stripped (fast path kept) → C3 names the missing fallback only", async () => {
+  const dir = await makeCopy("soultrip-negctl-timeoutfb-");
+  try {
+    await sabotageInCopy(dir, "assets/js/main.js", [
+      ['      } else if (typeof AbortController !== "undefined") {\n        var submitAbort = new AbortController();\n        fetchOptions.signal = submitAbort.signal;\n        submitTimer = setTimeout(function () { submitAbort.abort(); }, 15000);\n      }\n', '      }\n']
+    ]);
+    const r = await checkSite(dir);
+    return {
+      pass:
+        r.code === 1 &&
+        /main\.js lacks the enquiry submit timeout fallback/.test(r.out) &&
+        !/main\.js lacks the enquiry submit timeout \(AbortSignal\.timeout\)/.test(r.out),
+      evidence: `exit=${r.code}`
+    };
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+await test("T55", "sabotage: honeypot path back to a silent return → C3 names the missing shared success", async () => {
+  const dir = await makeCopy("soultrip-negctl-honeypot-");
+  try {
+    await sabotageInCopy(dir, "assets/js/main.js", [
+      ['        showEnquirySuccess();\n        return;\n      }\n\n      // Native validity check', '        return;\n      }\n\n      // Native validity check']
+    ]);
+    const r = await checkSite(dir);
+    return {
+      pass: r.code === 1 && /honeypot path must resolve to the same success state/.test(r.out),
       evidence: `exit=${r.code}`
     };
   } finally {

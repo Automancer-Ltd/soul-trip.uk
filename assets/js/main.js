@@ -149,12 +149,22 @@
   var submitBtn = document.getElementById("submit-btn");
 
   if (form) {
+    // Visible outcome of a sent enquiry — shared by the real submit path
+    // and the honeypot path, so a bot learns nothing from the response.
+    function showEnquirySuccess() {
+      form.style.display = "none";
+      successPanel.classList.add("is-visible");
+      scrollToEl(document.getElementById("enquiry"), 24);
+    }
+
     form.addEventListener("submit", function (e) {
       e.preventDefault();
 
-      // Honeypot — silently succeed for bots
+      // Honeypot — resolve to the same visible outcome as a real submit,
+      // but send nothing and report nothing.
       var hp = form.querySelector('input[name="_gotcha"]');
       if (hp && hp.value) {
+        showEnquirySuccess();
         return;
       }
 
@@ -178,21 +188,35 @@
         body: data,
         headers: { Accept: "application/json" }
       };
+      // Older browsers lack the built-in signal timeout: enforce the same
+      // 15 s bound with a manual abort controller instead, cleared on
+      // settle below.
+      var submitTimer = null;
+      function clearSubmitTimer() {
+        if (submitTimer !== null) {
+          clearTimeout(submitTimer);
+          submitTimer = null;
+        }
+      }
       if (typeof AbortSignal !== "undefined" && typeof AbortSignal.timeout === "function") {
         fetchOptions.signal = AbortSignal.timeout(15000);
+      } else if (typeof AbortController !== "undefined") {
+        var submitAbort = new AbortController();
+        fetchOptions.signal = submitAbort.signal;
+        submitTimer = setTimeout(function () { submitAbort.abort(); }, 15000);
       }
 
       fetch(form.action, fetchOptions)
         .then(function (response) {
+          clearSubmitTimer();
           if (response.ok) {
-            form.style.display = "none";
-            successPanel.classList.add("is-visible");
-            scrollToEl(document.getElementById("enquiry"), 24);
+            showEnquirySuccess();
           } else {
             throw new Error("Bad response");
           }
         })
         .catch(function (err) {
+          clearSubmitTimer();
           // Report the failure without any visitor data so lost enquiries are
           // visible; the Sentry guard redacts the event before it leaves.
           if (window.Sentry && typeof window.Sentry.captureException === "function") {
