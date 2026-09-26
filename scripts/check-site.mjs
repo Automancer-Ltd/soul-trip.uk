@@ -25,6 +25,7 @@ const REQUIRED_JS_SNIPPETS = [
   ["honeypot query", 'input[name="_gotcha"]'],
   ["submit target", "fetch(form.action"],
   ["submit timeout", "AbortSignal.timeout"],
+  ["submit timeout fallback", "AbortController"],
   ["failure reporting", "captureException"]
 ];
 
@@ -244,6 +245,13 @@ if (forms.length === 0) {
   } else {
     for (const [label, snippet] of REQUIRED_JS_SNIPPETS) {
       if (!mainJs.includes(snippet)) fail("C3", `main.js lacks the enquiry ${label} (${snippet})`);
+    }
+    // A honeypot-triggered submit must resolve to the same visible success
+    // state as a real one — never a dead-silent form — while sending nothing.
+    // The honeypot branch must therefore reach the shared success helper.
+    const honeypotBranch = /if\s*\(\s*hp\s*&&\s*hp\.value\s*\)\s*\{[^}]*\}/.exec(mainJs);
+    if (!honeypotBranch || !/showEnquirySuccess/.test(honeypotBranch[0])) {
+      fail("C3", "main.js honeypot path must resolve to the same success state as a real submit (showEnquirySuccess)");
     }
   }
 
