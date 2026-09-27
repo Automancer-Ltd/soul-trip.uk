@@ -65,11 +65,24 @@ jobs:
       - name: Negative-control suite — every checker proven able to fail; purity proofs for read-only commands
         run: node scripts/test-negative-controls.mjs
 
+  unbounded-calls:
+    name: check unbounded outside calls
+    runs-on: ${{ fromJSON(vars.CI_RUNNER || '"ubuntu-latest"') }}
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: check unbounded outside calls
+        uses: Automancer-Ltd/estate-checks@a5bf3787e74b299031bb5fb80da0be88a449a397 # v1.1.0
+        with:
+          exclude-paths: "scripts/test-negative-controls.mjs"
+
   # ---------------------------------------------------------------------------
   # Publish. Only from `main`, only on a push, and only after `verify` is green.
   # ---------------------------------------------------------------------------
   build:
-    needs: verify
+    needs: [verify, unbounded-calls]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ${{ fromJSON(vars.CI_RUNNER || '"ubuntu-latest"') }}
     timeout-minutes: 10
