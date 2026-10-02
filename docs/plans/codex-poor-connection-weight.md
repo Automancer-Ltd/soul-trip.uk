@@ -8,11 +8,11 @@ Reduce image transfer and improve the first screen on a poor connection. Preserv
 
 ## Decisions and ownership
 
-- Native responsive WebP images; evergreen browsers and Safari 15 support this format. Keep original JPEGs as source photographs and existing share metadata.
-- Match `sizes` to existing CSS columns and breakpoints. Fixed service cards, partnership image and Vision rail derivatives retain the existing centered cover crop; hero, background and breakpoint-dependent figures retain their full source aspect ratios. Derive with Pillow `ImageOps.exif_transpose`, `ImageOps.fit`, Lanczos resizing and WebP quality 82 / method 6; cap widths at source pixels. Hero loads eagerly at high priority; every other photograph remains lazy and decodes asynchronously.
-- A responsive hero preload lets discovery begin in the head without downloading a second candidate.
-- No new runtime dependency or build step. Generated images are committed static assets.
-- Files: `index.html`, derived files under `images/`, `site-manifest.json`, this plan. The existing broken-image negative control now derives its target from an image `src`, preserving its missing-file rejection without pinning a photograph filename. CSS and enquiry logic require no change.
+- Native responsive WebP images; evergreen browsers and Safari 15 support this format. The hero additionally uses an AVIF `<source>` and typed responsive preload, with WebP as the older-browser fallback. Encode AVIF with Pillow quality 50 / speed 6 / two threads; retain all four widths and framing. Keep original JPEGs as source photographs and existing share metadata.
+- Match `sizes` to existing CSS columns and breakpoints. For the untrimmed About and Hajj images, desktop hints include the source width needed by portrait cover frames. The tall stacked Vision section uses the original source resolution below 880 px; reducing its source to viewport width visibly softened the background. Fixed service cards, partnership image and Vision rail derivatives retain the existing centered cover crop; hero, background and breakpoint-dependent figures retain their full source aspect ratios. Derive with Pillow `ImageOps.exif_transpose`, `ImageOps.fit`, Lanczos resizing and WebP quality 82 / method 6; cap widths at source pixels. Hero loads eagerly at high priority; every other photograph remains lazy and decodes asynchronously.
+- A responsive hero preload lets discovery begin in the head without downloading a second candidate. Only AVIF-capable browsers consume the AVIF preload; other browsers use the eager WebP image.
+- No new runtime dependency or build step. Generated images are committed static assets. Serve the existing Latin brand fonts locally with their OFL licences; preload above-fold fonts and defer the error-reporting SDK at low priority while preserving deferred script order. Inter and Playfair retain their full Google-served variable font files. Cormorant retains every source glyph and the existing used italic weight 500, instantiated with `fontTools.varLib.instancer.instantiateVariableFont(font, {"wght": 500})`; no reserved font name applies to that family. This removes a font CSS round trip and retains the settled typography.
+- Files: `index.html`, derived files under `images/`, local font assets/licences under `assets/fonts/`, font declarations in `assets/css/styles.css`, `site-manifest.json`, this plan. The existing broken-image negative control now derives its target from an image `src`, preserving its missing-file rejection without pinning a photograph filename. The enquiry JavaScript is unchanged. The brand link accessible name now includes its visible ampersand.
 - This public implementation plan is committed as explicitly requested for this lane, overriding the older local convention that ignored all `docs/`. Private notes and generated evidence remain outside git.
 
 ## Cursor
@@ -26,10 +26,12 @@ Reduce image transfer and improve the first screen on a poor connection. Preserv
 
 ## Verification and evidence
 
-Use the workflow's manifest, site, Sentry, production-verifier negative controls and hostile-control suite. Browser verification uses local previews only, blocks enquiry POSTs and reporting POSTs, and mutes audio. Measure cold contexts at 390×844, DPR 2, 1.6 Mbps down / 750 Kbps up, 150 ms latency and 4× CPU slowdown; compare multiple runs. Check layout at 320, 375, 768, 1024 and 1440 pixels and every lazy photograph after scrolling.
+Use the workflow's manifest, site, Sentry, production-verifier negative controls and hostile-control suite. Browser verification uses local previews only, blocks enquiry POSTs and reporting POSTs, and mutes audio. Measure cold contexts at 390×844, DPR 2, 1.6 Mbps down / 750 Kbps up, 150 ms latency and 4× CPU slowdown; compare multiple runs. Preview HTML/CSS/JS/SVG use gzip, matching the live GitHub Pages response encoding verified with read-only `curl -I -H "Accept-Encoding: gzip, br"` requests. Both sides use this same server/profile. Cold cache means the preview cache lifetime is irrelevant. Check layout at 320, 375, 768, 1024 and 1440 pixels and every lazy photograph after scrolling.
 
 Detailed before/after measurements belong in the pull request description and evidence comment, never committed. Matched screenshots are used for visual review and remain outside git. The PR description/comment is the durable evidence index.
 
 Manifest, site contracts, JavaScript syntax, active Sentry integrity, production-verifier controls and all 55 negative controls pass. Matched browser checks at all five widths confirm identical visible text and image bounds, loaded photographs and no horizontal overflow. The throttled profile fetches one high-priority hero candidate and no offscreen photographs.
 
-Next: open PR, read back CI and publish the measurement evidence there. No deployment is authorized.
+PR: https://github.com/Automancer-Ltd/soul-trip.uk/pull/11. The initial milestone CI passed. Final loading and font changes require a fresh check run.
+
+Next: verify the final candidate, update the PR measurements and CI evidence, then stop owned processes and remove scratch files. No deployment is authorized.

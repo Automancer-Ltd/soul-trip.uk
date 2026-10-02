@@ -3,6 +3,24 @@
    Luxury Islamic modern. Emerald + gold + sand. Editorial.
    ============================================================ */
 
+/* Same brand fonts, served locally so the first screen avoids a font CSS round trip. */
+@font-face {
+  font-family: "Inter"; font-style: normal; font-weight: 400 700;
+  font-display: swap; src: url("../fonts/inter-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Playfair Display"; font-style: normal; font-weight: 500 700;
+  font-display: swap; src: url("../fonts/playfair-display-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Playfair Display"; font-style: italic; font-weight: 500 600;
+  font-display: swap; src: url("../fonts/playfair-display-italic-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Cormorant Garamond"; font-style: italic; font-weight: 500;
+  font-display: swap; src: url("../fonts/cormorant-garamond-italic-latin.woff2") format("woff2");
+}
+
 /* ---------- Tokens ---------- */
 :root {
   --emerald-900: #0B3D2E;
