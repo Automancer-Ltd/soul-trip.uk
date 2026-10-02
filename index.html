@@ -19,10 +19,14 @@
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Cormorant+Garamond:ital,wght@1,500;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Discover the same responsive hero candidate before styles and fonts. -->
+  <link rel="preload" as="image" type="image/avif" href="images/hajj-umrah/kaaba-960.avif" imagesrcset="images/hajj-umrah/kaaba-640.avif 640w, images/hajj-umrah/kaaba-960.avif 960w, images/hajj-umrah/kaaba-1440.avif 1440w, images/hajj-umrah/kaaba-2400.avif 2400w" imagesizes="100vw" fetchpriority="high" />
+
+  <!-- Preload the exact fonts used above the fold to prevent late text reflow. -->
+  <link rel="preload" as="font" href="assets/fonts/inter-latin.woff2" type="font/woff2" crossorigin fetchpriority="high" />
+  <link rel="preload" as="font" href="assets/fonts/playfair-display-latin.woff2" type="font/woff2" crossorigin fetchpriority="high" />
+  <link rel="preload" as="font" href="assets/fonts/playfair-display-italic-latin.woff2" type="font/woff2" crossorigin fetchpriority="high" />
+  <link rel="preload" as="font" href="assets/fonts/cormorant-garamond-italic-latin.woff2" type="font/woff2" crossorigin fetchpriority="high" />
 
   <link rel="stylesheet" href="assets/css/styles.css" />
 </head>
@@ -32,7 +36,7 @@
   <!-- ===================== NAV ===================== -->
   <header class="nav" id="nav">
     <div class="nav__inner">
-      <a class="brand" href="#top" aria-label="SoulTrip Travel and Tours, home">
+      <a class="brand" href="#top" aria-label="SoulTrip Travel &amp; Tours, home">
         <span class="brand__name">SoulTrip</span>
         <span class="brand__sub">Travel &amp; Tours</span>
       </a>
@@ -57,7 +61,10 @@
 
     <!-- ===================== HERO ===================== -->
     <section class="hero" data-screen-label="Hero">
-      <img class="hero__bg" src="images/hajj-umrah/kaaba.jpg" alt="The Holy Kaaba at the Masjid al-Haram in Makkah, surrounded by pilgrims in white ihram" fetchpriority="high" style="object-position: center 45%;" />
+      <picture>
+        <source type="image/avif" srcset="images/hajj-umrah/kaaba-640.avif 640w, images/hajj-umrah/kaaba-960.avif 960w, images/hajj-umrah/kaaba-1440.avif 1440w, images/hajj-umrah/kaaba-2400.avif 2400w" sizes="100vw" />
+        <img class="hero__bg" src="images/hajj-umrah/kaaba-960.webp" srcset="images/hajj-umrah/kaaba-640.webp 640w, images/hajj-umrah/kaaba-960.webp 960w, images/hajj-umrah/kaaba-1440.webp 1440w, images/hajj-umrah/kaaba-2400.webp 2400w" sizes="100vw" width="2400" height="3000" alt="The Holy Kaaba at the Masjid al-Haram in Makkah, surrounded by pilgrims in white ihram" loading="eager" fetchpriority="high" style="object-position: center 45%;" />
+      </picture>
       <div class="hero__inner">
         <div class="hero__content reveal">
           <span class="eyebrow hero__eyebrow">Reconnect Spiritually · Explore Globally</span>
@@ -112,7 +119,7 @@
             </div>
           </div>
           <figure class="about__media reveal">
-            <img src="images/experiences/diriyah-heritage-village.jpg" alt="Traditional Najdi mud-brick architecture at the historic Diriyah heritage village" loading="lazy" />
+            <img src="images/experiences/diriyah-heritage-village-960.webp" srcset="images/experiences/diriyah-heritage-village-480.webp 480w, images/experiences/diriyah-heritage-village-960.webp 960w, images/experiences/diriyah-heritage-village-1024.webp 1024w" sizes="(max-width: 768px) calc(100vw - clamp(2.5rem, 10vw, 8rem)), calc(((min(100vw, 1240px) - clamp(2.5rem, 10vw, 8rem)) - clamp(2rem, 5vw, 4.5rem)) * 0.95)" width="1024" height="640" alt="Traditional Najdi mud-brick architecture at the historic Diriyah heritage village" loading="lazy" decoding="async" />
           </figure>
         </div>
       </div>
@@ -130,7 +137,7 @@
           <!-- Card 1 -->
           <article class="card reveal">
             <div class="card__media">
-              <img src="images/experiences/alula-valley-vista.jpg" alt="Two travellers in Saudi dress overlooking the palm valley of AlUla" loading="lazy" />
+              <img src="images/experiences/alula-valley-vista-960.webp" srcset="images/experiences/alula-valley-vista-480.webp 480w, images/experiences/alula-valley-vista-960.webp 960w, images/experiences/alula-valley-vista-1440.webp 1440w" sizes="(max-width: 768px) calc(100vw - clamp(2.5rem, 10vw, 8rem)), calc(((min(100vw, 1240px) - clamp(2.5rem, 10vw, 8rem)) - clamp(1.5rem, 3vw, 2.25rem)) / 2)" width="2048" height="1280" alt="Two travellers in Saudi dress overlooking the palm valley of AlUla" loading="lazy" decoding="async" />
             </div>
             <div class="card__body">
               <h3 class="card__title">Spiritual Journeys</h3>
@@ -150,7 +157,7 @@
           <!-- Card 2 -->
           <article class="card reveal">
             <div class="card__media">
-              <img src="images/business/kafd-financial-district-aerial.jpg" alt="King Abdullah Financial District towers in Riyadh during golden hour" loading="lazy" />
+              <img src="images/business/kafd-financial-district-aerial-960.webp" srcset="images/business/kafd-financial-district-aerial-480.webp 480w, images/business/kafd-financial-district-aerial-960.webp 960w, images/business/kafd-financial-district-aerial-1440.webp 1440w" sizes="(max-width: 768px) calc(100vw - clamp(2.5rem, 10vw, 8rem)), calc(((min(100vw, 1240px) - clamp(2.5rem, 10vw, 8rem)) - clamp(1.5rem, 3vw, 2.25rem)) / 2)" width="1564" height="978" alt="King Abdullah Financial District towers in Riyadh during golden hour" loading="lazy" decoding="async" />
             </div>
             <div class="card__body">
               <h3 class="card__title">Business Travel &amp; Saudi Opportunities</h3>
@@ -173,7 +180,7 @@
           <!-- Card 3 -->
           <article class="card reveal">
             <div class="card__media">
-              <img src="images/business/riyadh-skyline-night-aerial.jpg" alt="The Riyadh skyline at night, with Kingdom Centre lit green above the city" loading="lazy" />
+              <img src="images/business/riyadh-skyline-night-aerial-960.webp" srcset="images/business/riyadh-skyline-night-aerial-480.webp 480w, images/business/riyadh-skyline-night-aerial-960.webp 960w, images/business/riyadh-skyline-night-aerial-1440.webp 1440w" sizes="(max-width: 768px) calc(100vw - clamp(2.5rem, 10vw, 8rem)), calc(((min(100vw, 1240px) - clamp(2.5rem, 10vw, 8rem)) - clamp(1.5rem, 3vw, 2.25rem)) / 2)" width="2048" height="1280" alt="The Riyadh skyline at night, with Kingdom Centre lit green above the city" loading="lazy" decoding="async" />
             </div>
             <div class="card__body">
               <h3 class="card__title">Hotels &amp; Accommodation</h3>
@@ -192,7 +199,7 @@
           <!-- Card 4 -->
           <article class="card reveal">
             <div class="card__media">
-              <img src="images/business/al-faisaliah-tower-night.jpg" alt="Al Faisaliah tower illuminated against the night sky in Riyadh" loading="lazy" />
+              <img src="images/business/al-faisaliah-tower-night-960.webp" srcset="images/business/al-faisaliah-tower-night-480.webp 480w, images/business/al-faisaliah-tower-night-960.webp 960w, images/business/al-faisaliah-tower-night-1366.webp 1366w" sizes="(max-width: 768px) calc(100vw - clamp(2.5rem, 10vw, 8rem)), calc(((min(100vw, 1240px) - clamp(2.5rem, 10vw, 8rem)) - clamp(1.5rem, 3vw, 2.25rem)) / 2)" width="1366" height="854" alt="Al Faisaliah tower illuminated against the night sky in Riyadh" loading="lazy" decoding="async" />
             </div>
             <div class="card__body">
               <h3 class="card__title">Transportation Services</h3>
@@ -255,7 +262,7 @@
 
     <!-- ===================== VISION 2030 ===================== -->
     <section class="section vision" id="vision-2030" data-screen-label="Vision 2030">
-      <img class="vision__bg" src="images/business/saudi-pavilion-trade-show.jpg" alt="Saudi tourism pavilion at an international expo" loading="lazy" />
+      <img class="vision__bg" src="images/business/saudi-pavilion-trade-show-960.webp" srcset="images/business/saudi-pavilion-trade-show-640.webp 640w, images/business/saudi-pavilion-trade-show-960.webp 960w, images/business/saudi-pavilion-trade-show-1440.webp 1440w, images/business/saudi-pavilion-trade-show-1800.webp 1800w" sizes="(max-width: 880px) 1800px, 100vw" width="1800" height="1225" alt="Saudi tourism pavilion at an international expo" loading="lazy" decoding="async" />
       <div class="wrap">
         <div class="section-head reveal">
           <span class="eyebrow">The Future is Here</span>
@@ -268,19 +275,19 @@
         </div>
         <div class="vision__rail">
           <figure class="vrail-item reveal">
-            <img src="images/business/kafd-vision-2030.jpg" alt="Riyadh skyline at sunset with the Vision 2030 emblem" loading="lazy" />
+            <img src="images/business/kafd-vision-2030-753.webp" srcset="images/business/kafd-vision-2030-480.webp 480w, images/business/kafd-vision-2030-753.webp 753w" sizes="(max-width: 520px) calc(100vw - clamp(2.5rem, 10vw, 8rem)), (max-width: 880px) calc((100vw - clamp(2.5rem, 10vw, 8rem) - clamp(1rem, 2vw, 1.5rem)) / 2), calc(((min(100vw, 1240px) - clamp(2.5rem, 10vw, 8rem)) - 3 * clamp(1rem, 2vw, 1.5rem)) / 4)" width="753" height="1004" alt="Riyadh skyline at sunset with the Vision 2030 emblem" loading="lazy" decoding="async" />
             <figcaption>Vision 2030</figcaption>
           </figure>
           <figure class="vrail-item reveal">
-            <img src="images/business/jax-district-towers-rendering.jpg" alt="Rendering of modern glass towers in a new Riyadh district" loading="lazy" />
+            <img src="images/business/jax-district-towers-rendering-364.webp" srcset="images/business/jax-district-towers-rendering-364.webp 364w" sizes="(max-width: 520px) calc(100vw - clamp(2.5rem, 10vw, 8rem)), (max-width: 880px) calc((100vw - clamp(2.5rem, 10vw, 8rem) - clamp(1rem, 2vw, 1.5rem)) / 2), calc(((min(100vw, 1240px) - clamp(2.5rem, 10vw, 8rem)) - 3 * clamp(1rem, 2vw, 1.5rem)) / 4)" width="364" height="486" alt="Rendering of modern glass towers in a new Riyadh district" loading="lazy" decoding="async" />
             <figcaption>New Riyadh Districts</figcaption>
           </figure>
           <figure class="vrail-item reveal">
-            <img src="images/experiences/sheybarah-red-sea-villas.jpg" alt="Sheybarah overwater villas at the Red Sea Project" loading="lazy" />
+            <img src="images/experiences/sheybarah-red-sea-villas-960.webp" srcset="images/experiences/sheybarah-red-sea-villas-480.webp 480w, images/experiences/sheybarah-red-sea-villas-960.webp 960w, images/experiences/sheybarah-red-sea-villas-1024.webp 1024w" sizes="(max-width: 520px) calc(100vw - clamp(2.5rem, 10vw, 8rem)), (max-width: 880px) calc((100vw - clamp(2.5rem, 10vw, 8rem) - clamp(1rem, 2vw, 1.5rem)) / 2), calc(((min(100vw, 1240px) - clamp(2.5rem, 10vw, 8rem)) - 3 * clamp(1rem, 2vw, 1.5rem)) / 4)" width="1024" height="1365" alt="Sheybarah overwater villas at the Red Sea Project" loading="lazy" decoding="async" />
             <figcaption>Tourism &amp; Hospitality</figcaption>
           </figure>
           <figure class="vrail-item reveal">
-            <img src="images/experiences/hegra-tombs-alula.jpg" alt="Nabataean rock-hewn tombs at Hegra (Mada'in Saleh) near AlUla" loading="lazy" />
+            <img src="images/experiences/hegra-tombs-alula-960.webp" srcset="images/experiences/hegra-tombs-alula-480.webp 480w, images/experiences/hegra-tombs-alula-960.webp 960w, images/experiences/hegra-tombs-alula-1024.webp 1024w" sizes="(max-width: 520px) calc(100vw - clamp(2.5rem, 10vw, 8rem)), (max-width: 880px) calc((100vw - clamp(2.5rem, 10vw, 8rem) - clamp(1rem, 2vw, 1.5rem)) / 2), calc(((min(100vw, 1240px) - clamp(2.5rem, 10vw, 8rem)) - 3 * clamp(1rem, 2vw, 1.5rem)) / 4)" width="1024" height="1365" alt="Nabataean rock-hewn tombs at Hegra (Mada'in Saleh) near AlUla" loading="lazy" decoding="async" />
             <figcaption>Heritage &amp; Discovery</figcaption>
           </figure>
         </div>
@@ -312,7 +319,7 @@
             </a>
           </div>
           <figure class="hajj__media reveal">
-            <img src="images/hajj-umrah/makkah-clock-tower-aerial-sunset.jpg" alt="Aerial view of Masjid al-Haram and the Makkah Royal Clock Tower glowing at sunset" loading="lazy" />
+            <img src="images/hajj-umrah/makkah-clock-tower-aerial-sunset-960.webp" srcset="images/hajj-umrah/makkah-clock-tower-aerial-sunset-480.webp 480w, images/hajj-umrah/makkah-clock-tower-aerial-sunset-960.webp 960w, images/hajj-umrah/makkah-clock-tower-aerial-sunset-1440.webp 1440w" sizes="(max-width: 768px) calc(100vw - clamp(2.5rem, 10vw, 8rem)), calc(((min(100vw, 1240px) - clamp(2.5rem, 10vw, 8rem)) - clamp(2rem, 5vw, 4.5rem)) * 0.835)" width="2048" height="1534" alt="Aerial view of Masjid al-Haram and the Makkah Royal Clock Tower glowing at sunset" loading="lazy" decoding="async" />
           </figure>
         </div>
       </div>
@@ -323,7 +330,7 @@
       <div class="wrap">
         <div class="partners__grid">
           <figure class="partners__media reveal">
-            <img src="images/business/saudi-trade-delegation.jpg" alt="Saudi trade delegation in formal dress at a business event" loading="lazy" />
+            <img src="images/business/saudi-trade-delegation-960.webp" srcset="images/business/saudi-trade-delegation-480.webp 480w, images/business/saudi-trade-delegation-960.webp 960w, images/business/saudi-trade-delegation-1066.webp 1066w" sizes="(max-width: 768px) calc(100vw - clamp(2.5rem, 10vw, 8rem)), calc(((min(100vw, 1240px) - clamp(2.5rem, 10vw, 8rem)) - clamp(2rem, 5vw, 4.5rem)) / 2)" width="1066" height="853" alt="Saudi trade delegation in formal dress at a business event" loading="lazy" decoding="async" />
           </figure>
           <div class="partners__text reveal">
             <span class="eyebrow">15+ Years of Trust</span>
@@ -530,11 +537,12 @@
   -->
   <script
     id="sentry-sdk"
+    defer fetchpriority="low"
     src="https://browser.sentry-cdn.com/10.66.0/bundle.min.js"
     integrity="sha384-rtwsnRY5j8smljaOw72wBKVSXCYaWu7dWy/6NH+Iy0524oU2b5VpFHc83FOev09R"
     crossorigin="anonymous"
     data-dsn="https://be9441f84918f5340663a91ed182498c@o4511673494732800.ingest.de.sentry.io/4511769917128784"></script>
-  <script src="assets/js/sentry-init.js"></script>
-  <script src="assets/js/main.js"></script>
+  <script defer src="assets/js/sentry-init.js"></script>
+  <script defer src="assets/js/main.js"></script>
 </body>
 </html>
