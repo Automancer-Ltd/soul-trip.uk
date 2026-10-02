@@ -74,7 +74,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: check unbounded outside calls
-        uses: Automancer-Ltd/estate-checks@a5bf3787e74b299031bb5fb80da0be88a449a397 # v1.1.0
+        uses: Automancer-Ltd/estate-checks@d5f9c888a1ea5580db9f7a9f380b059ffeaaddce # v1.2.1
         with:
           exclude-paths: "scripts/test-negative-controls.mjs"
 
