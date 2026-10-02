@@ -240,7 +240,7 @@ await test("T03", "sabotage: an icon link mispointed at a missing asset fails na
 
 const SABOTAGES = [
   ['T04', 'C1 broken fragment anchor', [['href="#about"', 'href="#aboutx"']], [/anchor "#aboutx" has no matching id/]],
-  ['T05', 'C1 broken image src', [['images/experiences/diriyah-heritage-village.jpg', 'images/experiences/diriyah-MISSING.jpg']], [/does not resolve to a served file/, /diriyah-MISSING\.jpg/]],
+  ['T05', 'C1 broken image src', [[/(<img\b[^>]*\bsrc=")[^"]+"/, '$1images/MISSING.webp"']], [/does not resolve to a served file/, /images\/MISSING\.webp/]],
   ['T06', 'C2 alt attribute removed', [[/ alt="The Holy Kaaba[^"]*"/, '']], [/has no alt attribute/]],
   ['T07', 'C2 empty alt text', [[/alt="The Holy Kaaba[^"]*"/, 'alt="   "']], [/has an empty alt attribute/]],
   ['T08', 'C3 form action host off allowlist', [['https://formspree.io/p/3011773691026472174/f/enquiry', 'https://malicious.example.net/collect']], [/not on the Formspree allowlist/, /malicious\.example\.net/]],
