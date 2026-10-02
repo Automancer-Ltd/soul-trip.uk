@@ -21,8 +21,8 @@ Reduce image transfer and improve the first screen on a poor connection. Preserv
 - [x] Record cold-cache baseline on a throttled mobile profile.
 - [x] Generate responsive images and wire loading priority.
 - [x] Compare matched mobile/desktop captures and transfer/paint measurements.
-- [ ] Run repository gates, open PR, attach evidence and read back CI.
-- [ ] Stop owned processes and remove scratch files.
+- [x] Run repository gates, open PR, publish measurements and read back CI.
+- [x] Verify owned browser/server process and port cleanup. Remove disposable verification directories after the final checks and before handoff.
 
 ## Verification and evidence
 
@@ -30,8 +30,12 @@ Use the workflow's manifest, site, Sentry, production-verifier negative controls
 
 Detailed before/after measurements belong in the pull request description and evidence comment, never committed. Matched screenshots are used for visual review and remain outside git. The PR description/comment is the durable evidence index.
 
-Manifest, site contracts, JavaScript syntax, active Sentry integrity, production-verifier controls and all 55 negative controls pass. Matched browser checks at all five widths confirm identical visible text and image bounds, loaded photographs and no horizontal overflow. The throttled profile fetches one high-priority hero candidate and no offscreen photographs.
+PR: https://github.com/Automancer-Ltd/soul-trip.uk/pull/11.
+Evidence: https://github.com/Automancer-Ltd/soul-trip.uk/pull/11#issuecomment-5951276800 (individual before/after runs, Lighthouse comparison, layout review, fallback/interaction checks and implementation CI).
+Live verification state: `gh pr checks 11`; detailed job steps: `gh run view <run-id> --json jobs`. CI results belong in PR comments rather than commits.
 
-PR: https://github.com/Automancer-Ltd/soul-trip.uk/pull/11. The initial milestone CI passed. Final loading and font changes require a fresh check run.
+## Handoff
 
-Next: verify the final candidate, update the PR measurements and CI evidence, then stop owned processes and remove scratch files. No deployment is authorized.
+Implementation is complete. No additional runtime machinery is needed. Disposable previews enforce muted audio and block POSTs; their browser and server owners close in `finally`. Temporary clones, screenshots and reports are removed before handoff. The evidence comment holds the durable measurements.
+
+Next: owner review of the PR. No merge or deployment is authorized in this lane. Actual production verification and physical iOS Safari 15 qualification remain outside this branch-only delivery; its native WebP fallback has been checked in a browser fixture.
