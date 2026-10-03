@@ -29,6 +29,16 @@
   <link rel="preload" as="font" href="assets/fonts/cormorant-garamond-italic-latin.woff2" type="font/woff2" crossorigin fetchpriority="high" />
 
   <link rel="stylesheet" href="assets/css/styles.css" />
+  <noscript>
+    <style>
+      @media (max-width: 768px) {
+        .nav { position: relative; height: auto; background: var(--emerald-900); }
+        .nav__inner { flex-wrap: wrap; padding-top: 1rem; }
+        .nav__links { position: static; width: 100%; visibility: visible; opacity: 1; transform: none; margin-top: 1rem; }
+        .nav__toggle { display: none; }
+      }
+    </style>
+  </noscript>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -71,10 +81,10 @@
           <h1>Reconnect With Your Soul. Discover New Opportunities. <em>Experience Saudi Arabia.</em></h1>
           <p class="hero__sub">SoulTrip Travel and Tours Ltd offers spiritually enriching journeys, premium Hajj &amp; Umrah experiences, business travel solutions, trade delegation support, hotel bookings, transportation services, and tailored Saudi Arabia travel experiences aligned with the exciting future of Vision 2030.</p>
           <div class="hero__cta">
-            <a class="btn btn--gold" href="#enquiry">Start Your Journey
+            <a class="btn btn--gold" href="#hajj-umrah">Hajj &amp; Umrah
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             </a>
-            <a class="btn btn--ghost" href="#enquiry">Enquire Today</a>
+            <a class="btn btn--ghost" href="#business-travel">Saudi Business Travel</a>
           </div>
         </div>
       </div>
@@ -151,11 +161,13 @@
                 <li>Family Religious Tours</li>
                 <li>VIP &amp; Custom Packages</li>
               </ul>
+              <a class="service-link" href="#hajj-umrah">Explore Hajj &amp; Umrah <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-7-7 7 7-7 7"/></svg></a>
+              <a class="service-link" href="#enquiry" data-type="spiritual tour">Enquire about spiritual tours <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-7-7 7 7-7 7"/></svg></a>
             </div>
           </article>
 
           <!-- Card 2 -->
-          <article class="card reveal">
+          <article class="card reveal" id="business-travel" tabindex="-1">
             <div class="card__media">
               <img src="images/business/kafd-financial-district-aerial-960.webp" srcset="images/business/kafd-financial-district-aerial-480.webp 480w, images/business/kafd-financial-district-aerial-960.webp 960w, images/business/kafd-financial-district-aerial-1440.webp 1440w" sizes="(max-width: 768px) calc(100vw - clamp(2.5rem, 10vw, 8rem)), calc(((min(100vw, 1240px) - clamp(2.5rem, 10vw, 8rem)) - clamp(1.5rem, 3vw, 2.25rem)) / 2)" width="1564" height="978" alt="King Abdullah Financial District towers in Riyadh during golden hour" loading="lazy" decoding="async" />
             </div>
@@ -174,6 +186,7 @@
                 <li>Property Viewing Trips</li>
                 <li>Investor Visits</li>
               </ul>
+              <a class="service-link" href="#enquiry" data-type="business travel">Enquire about business travel <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-7-7 7 7-7 7"/></svg></a>
             </div>
           </article>
 
@@ -193,6 +206,7 @@
                 <li>Short &amp; Long-Term Bookings</li>
                 <li>Group Accommodation</li>
               </ul>
+              <a class="service-link" href="#enquiry" data-type="hotel booking">Enquire about hotels <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-7-7 7 7-7 7"/></svg></a>
             </div>
           </article>
 
@@ -213,6 +227,7 @@
                 <li>Intercity Travel</li>
                 <li>Business Transport Solutions</li>
               </ul>
+              <a class="service-link" href="#enquiry" data-type="transportation">Enquire about transport <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-7-7 7 7-7 7"/></svg></a>
             </div>
           </article>
         </div>
@@ -295,7 +310,7 @@
     </section>
 
     <!-- ===================== HAJJ & UMRAH ===================== -->
-    <section class="section hajj" id="hajj-umrah" data-screen-label="Hajj & Umrah">
+    <section class="section hajj" id="hajj-umrah" tabindex="-1" data-screen-label="Hajj & Umrah">
       <div class="wrap">
         <div class="hajj__grid">
           <div class="hajj__text reveal">
@@ -314,9 +329,10 @@
               <div class="hajj-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13l2-5h11l3 5"/><path d="M3 13h17v4H3z"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="16" cy="17.5" r="1.8"/></svg>Ground Transportation</div>
               <div class="hajj-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="9" r="3"/><circle cx="17" cy="11" r="2.4"/><path d="M2 20a6 6 0 0 1 12 0"/><path d="M14.5 20a4.5 4.5 0 0 1 7.5-3.3"/></svg>Group &amp; Private Packages</div>
             </div>
-            <a class="btn btn--gold" href="#enquiry?type=umrah" data-type="umrah">Enquire About Hajj &amp; Umrah
+            <a class="btn btn--gold" href="#enquiry" data-type="umrah">Enquire About Umrah
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             </a>
+            <a class="service-link" href="#enquiry" data-type="hajj">Enquire About Hajj <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-7-7 7 7-7 7"/></svg></a>
           </div>
           <figure class="hajj__media reveal">
             <img src="images/hajj-umrah/makkah-clock-tower-aerial-sunset-960.webp" srcset="images/hajj-umrah/makkah-clock-tower-aerial-sunset-480.webp 480w, images/hajj-umrah/makkah-clock-tower-aerial-sunset-960.webp 960w, images/hajj-umrah/makkah-clock-tower-aerial-sunset-1440.webp 1440w" sizes="(max-width: 768px) calc(100vw - clamp(2.5rem, 10vw, 8rem)), calc(((min(100vw, 1240px) - clamp(2.5rem, 10vw, 8rem)) - clamp(2rem, 5vw, 4.5rem)) * 0.835)" width="2048" height="1534" alt="Aerial view of Masjid al-Haram and the Makkah Royal Clock Tower glowing at sunset" loading="lazy" decoding="async" />
@@ -377,14 +393,14 @@
           <p>If you receive a like-for-like quote elsewhere, speak to our team about our <strong>Price Match Guarantee</strong> — because we aim to provide some of the most competitive prices available while still delivering a premium experience.</p>
         </div>
         <p class="price__line">Affordable. Reliable. Professional.</p>
-        <a class="btn btn--gold" href="#enquiry?type=business%20travel" data-type="business travel">Request a Quote
+        <a class="btn btn--gold" href="#enquiry" data-type="business travel">Request a Quote
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </a>
       </div>
     </section>
 
     <!-- ===================== ENQUIRY ===================== -->
-    <section class="section section--sand" id="enquiry" data-screen-label="Enquiry">
+    <section class="section section--sand" id="enquiry" tabindex="-1" data-screen-label="Enquiry">
       <div class="wrap">
         <div class="enquiry__grid">
           <div class="enquiry__intro reveal">
@@ -409,8 +425,25 @@
 
           <div class="reveal">
             <div class="form-card">
-              <form action="https://formspree.io/p/3011773691026472174/f/enquiry" method="POST" id="enquiry-form" novalidate>
+              <form action="https://formspree.io/p/3011773691026472174/f/enquiry" method="POST" id="enquiry-form">
+                <p class="form-required">Fields marked * are required.</p>
                 <div class="form-grid">
+                  <div class="field field--full">
+                    <label for="type">Type of Enquiry <span class="req">*</span></label>
+                    <select id="type" name="enquiry_type" data-type required aria-describedby="enquiry-guidance">
+                      <option value="" disabled selected>Select an enquiry type</option>
+                      <option value="Hajj">Hajj</option>
+                      <option value="Umrah">Umrah</option>
+                      <option value="Spiritual Tour">Spiritual Tour</option>
+                      <option value="Business Travel">Business Travel</option>
+                      <option value="Trade Shows &amp; Exhibitions">Trade Shows &amp; Exhibitions</option>
+                      <option value="Property Visits">Property Visits</option>
+                      <option value="Hotel Booking">Hotel Booking</option>
+                      <option value="Transportation">Transportation</option>
+                      <option value="Other">Other</option>
+                    </select>
+                    <p class="field-hint" id="enquiry-guidance" aria-live="polite">Choose the service you would like to discuss. Travel dates and group size can be left blank if you are still deciding.</p>
+                  </div>
                   <div class="field field--full">
                     <label for="name">Full Name <span class="req">*</span></label>
                     <input type="text" id="name" name="name" autocomplete="name" required />
@@ -423,24 +456,9 @@
                     <label for="email">Email Address <span class="req">*</span></label>
                     <input type="email" id="email" name="email" autocomplete="email" required />
                   </div>
-                  <div class="field field--full">
-                    <label for="type">Type of Enquiry <span class="req">*</span></label>
-                    <select id="type" name="enquiry_type" data-type required>
-                      <option value="" disabled selected>Select an enquiry type</option>
-                      <option value="Hajj">Hajj</option>
-                      <option value="Umrah">Umrah</option>
-                      <option value="Spiritual Tour">Spiritual Tour</option>
-                      <option value="Business Travel">Business Travel</option>
-                      <option value="Trade Shows &amp; Exhibitions">Trade Shows &amp; Exhibitions</option>
-                      <option value="Property Visits">Property Visits</option>
-                      <option value="Hotel Booking">Hotel Booking</option>
-                      <option value="Transportation">Transportation</option>
-                      <option value="Other">Other</option>
-                    </select>
-                  </div>
                   <div class="field">
                     <label for="dates">Preferred Travel Dates</label>
-                    <input type="text" id="dates" name="travel_dates" placeholder="e.g. March 2026 or flexible" />
+                    <input type="text" id="dates" name="travel_dates" placeholder="e.g. a month, date range or flexible" />
                   </div>
                   <div class="field">
                     <label for="travellers">Number of Travellers</label>
@@ -448,12 +466,20 @@
                   </div>
                   <div class="field field--full">
                     <label for="message">Message</label>
-                    <textarea id="message" name="message" rows="5" placeholder="Tell us about your journey…"></textarea>
+                    <textarea id="message" name="message" rows="5" aria-describedby="enquiry-guidance" placeholder="Tell us about your journey…"></textarea>
                   </div>
 
                   <input type="text" class="hp" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" />
 
-                  <div class="form-error" id="form-error" role="alert">Something went wrong. Please try again or message us on WhatsApp.</div>
+                  <div class="form-error" id="form-error" role="alert" tabindex="-1">
+                    <strong>We couldn’t confirm your enquiry was received.</strong>
+                    <p>Your details are still in the form. You can try again, or contact us directly. If you get in touch, mention that you tried the form so we can check for your enquiry.</p>
+                    <div class="form-recovery">
+                      <a href="https://wa.me/447577177172">WhatsApp</a>
+                      <a href="mailto:info@soul-trip.uk">Email us</a>
+                      <a href="tel:+447577177172">Call us</a>
+                    </div>
+                  </div>
 
                   <div class="form-actions">
                     <button type="submit" class="btn btn--gold btn--block" id="submit-btn">Submit Enquiry</button>
@@ -462,7 +488,7 @@
                 </div>
               </form>
 
-              <div class="form-success" id="form-success" role="status" aria-live="polite">
+              <div class="form-success" id="form-success" role="status" aria-live="polite" tabindex="-1">
                 <div class="form-success__mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
                 <h3>Thank you. Your enquiry has been received.</h3>
                 <p>Our team will be in touch within one working day, inshaAllah.</p>
@@ -530,6 +556,8 @@
     </a>
   </footer>
 
+  <!-- The enquiry and navigation do not wait for the monitoring CDN. -->
+  <script defer src="assets/js/main.js"></script>
   <!--
     This is the active public browser-ingest DSN, managed under the BWS key
     STW1_SENTRY_WEB_DSN. It is not an authentication credential; never put a
@@ -543,6 +571,5 @@
     crossorigin="anonymous"
     data-dsn="https://be9441f84918f5340663a91ed182498c@o4511673494732800.ingest.de.sentry.io/4511769917128784"></script>
   <script defer src="assets/js/sentry-init.js"></script>
-  <script defer src="assets/js/main.js"></script>
 </body>
 </html>

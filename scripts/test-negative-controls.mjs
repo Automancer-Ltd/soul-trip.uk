@@ -532,7 +532,7 @@ await test("T27", "sabotage: C3 error panel id renamed (#form-error) → fails n
   const dir = await makeCopy("soultrip-negctl-errid-");
   try {
     await sabotageInCopy(dir, "index.html", [
-      ['<div class="form-error" id="form-error" role="alert">', '<div class="form-errorx" id="form-errorx" role="alert">']
+      ['id="form-error"', 'id="form-errorx"']
     ]);
     const r = await checkSite(dir);
     return {
@@ -1070,7 +1070,7 @@ await test("T50", "sabotage: quote CTA reverted to a bare #enquiry link → C3 n
   const dir = await makeCopy("soultrip-negctl-quote-");
   try {
     await sabotageInCopy(dir, "index.html", [
-      ['href="#enquiry?type=business%20travel" data-type="business travel">Request a Quote', 'href="#enquiry">Request a Quote']
+      ['href="#enquiry" data-type="business travel">Request a Quote', 'href="#enquiry">Request a Quote']
     ]);
     const r = await checkSite(dir);
     return {

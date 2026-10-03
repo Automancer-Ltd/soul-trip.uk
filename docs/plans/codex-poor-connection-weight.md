@@ -1,6 +1,6 @@
 # Poor-connection image delivery
 
-Last verified: 2026-10-02 (`git log -1`; checks in `.github/workflows/site-contract.yml`).
+Last verified: 2026-10-02 (`git log -1`; checks in `.github/workflows/check.yml`).
 
 ## Goal and boundaries
 
