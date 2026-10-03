@@ -1,5 +1,25 @@
 # Release notes
 
+## v2026.10.03.1 — 3 October 2026
+
+### Explore our services
+
+- The two buttons at the top of the page now lead to Hajj & Umrah and to Saudi Business Travel, and the service sections link straight to an enquiry.
+- When you choose a service in the enquiry form, it suggests what to include in your message.
+- The “Request a Quote” button opens the enquiry form with Business Travel already selected.
+
+### A faster start
+
+- The first screen downloads less image and font data, so it appears sooner, especially on a slow connection.
+
+### Enquiries
+
+- Choose an enquiry type before you send your message.
+- If sending stalls, the form stops waiting after 15 seconds instead of staying on “Sending”, including in older browsers.
+- If the form cannot confirm that your enquiry arrived, your details stay in the form. You can try again or contact us by WhatsApp, email or phone.
+- Pressing send again while an enquiry is sending no longer sends it twice.
+
+
 ## v2026.09.01.1 — 1 September 2026
 
 ### Visual improvements
