@@ -19,7 +19,8 @@ The notes are written after the deploy instead, by the estate's hourly
 catch-up lane. `.release-notes.json` declares `"deployTrigger": "push"` for this
 reason. Without that key the repository uses the legacy `ref` model, and the
 lane skips it. That is how five shipped user-facing commits after
-`v2026.09.01.1` went without notes until AUT-12527 found them.
+`v2026.09.01.1` went without notes until AUT-12527 found them. They were
+released by hand as `v2026.10.03.1` on 3 October 2026.
 
 ## The hourly contract
 
