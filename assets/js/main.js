@@ -110,35 +110,63 @@
     setTimeout(revealAll, 2500);
   }
 
-  /* ---------- Enquiry-type preselect from hash ---------- */
+  /* ---------- Service choice and enquiry guidance ---------- */
   var select = document.getElementById("type");
-  function presetFromHash() {
-    var hash = window.location.hash || "";
-    // matches "#enquiry?type=umrah" or "#type=umrah" etc.
-    var m = hash.match(/type=([a-z0-9 &%-]+)/i);
-    if (!m || !select) return;
-    var want = decodeURIComponent(m[1]).replace(/\+/g, " ").trim().toLowerCase();
+  var guidance = document.getElementById("enquiry-guidance");
+  var enquiry = document.getElementById("enquiry");
+  var prompts = {
+    "Hajj": "For Hajj, tell us when you hope to travel and any questions you would like to discuss with the team.",
+    "Umrah": "For Umrah, tell us your preferred dates, departure city and any questions about your journey.",
+    "Spiritual Tour": "Tell us which places or spiritual experiences interest you and whether you are travelling as a family or group.",
+    "Business Travel": "Tell us the purpose of your visit, the cities you plan to visit and any travel arrangements you need.",
+    "Trade Shows & Exhibitions": "Tell us the event name, location and dates, if known, and which travel arrangements you need.",
+    "Property Visits": "Tell us which cities you are considering and your preferred dates for property viewing trips.",
+    "Hotel Booking": "Tell us the city, preferred dates and number of rooms, if known.",
+    "Transportation": "Tell us the pickup and destination, approximate dates and group size, if known.",
+    "Other": "Tell us what you would like help with and any questions for the team."
+  };
+  function updateGuidance() {
+    if (guidance && prompts[select.value]) guidance.textContent = prompts[select.value] + " Share what you know in the message below; travel details are optional.";
+  }
+  function presetType(want) {
+    if (!select) return;
+    want = want.trim().toLowerCase();
     Array.prototype.forEach.call(select.options, function (opt) {
       if (opt.value.toLowerCase() === want || opt.text.toLowerCase() === want) {
         select.value = opt.value;
       }
     });
+    updateGuidance();
+  }
+  if (select) select.addEventListener("change", updateGuidance);
+  updateGuidance();
+
+  // Keep previously shared typed links working. Bad escaping must never
+  // stop the submit handler below from being installed.
+  function presetFromHash() {
+    var m = window.location.hash.match(/^#(?:enquiry\?|)type=([^&]*)/i);
+    if (!m) return;
+    try {
+      presetType(decodeURIComponent(m[1].replace(/\+/g, " ")));
+    } catch (_) { /* Leave the visitor's current choice intact. */ }
+    enquiry.focus({ preventScroll: true });
+    scrollToEl(enquiry);
   }
   presetFromHash();
   window.addEventListener("hashchange", presetFromHash);
 
-  // The Hajj/Umrah CTA uses href "#enquiry?type=umrah" which isn't a real
-  // element id — intercept it to scroll to #enquiry and preset the select.
-  document.querySelectorAll('a[href^="#enquiry?"]').forEach(function (link) {
+  // Real fragment links work without JavaScript. Enhancement carries the
+  // service choice and moves keyboard focus out of a closed mobile menu.
+  document.querySelectorAll('a[href^="#"]').forEach(function (link) {
     link.addEventListener("click", function (e) {
-      e.preventDefault();
-      var type = (link.getAttribute("data-type") || "").toLowerCase();
-      if (select && type) {
-        Array.prototype.forEach.call(select.options, function (opt) {
-          if (opt.value.toLowerCase() === type) select.value = opt.value;
-        });
-      }
-      scrollToEl(document.getElementById("enquiry"));
+      if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || e.button) return;
+      var target = document.getElementById(link.getAttribute("href").slice(1));
+      if (!target) return;
+      var type = link.getAttribute("data-type");
+      if (type) presetType(type);
+      if (!target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1");
+      target.focus({ preventScroll: true });
+      // Native navigation owns the URL and history; CSS supplies nav clearance.
     });
   });
 
@@ -154,11 +182,14 @@
     function showEnquirySuccess() {
       form.style.display = "none";
       successPanel.classList.add("is-visible");
-      scrollToEl(document.getElementById("enquiry"), 24);
+      successPanel.focus({ preventScroll: true });
+      scrollToEl(successPanel, 24);
     }
 
     form.addEventListener("submit", function (e) {
       e.preventDefault();
+      // A second submit (including Enter) must not send a second enquiry.
+      if (submitBtn.disabled) return;
 
       // Honeypot — resolve to the same visible outcome as a real submit,
       // but send nothing and report nothing.
@@ -227,8 +258,13 @@
           errorBox.classList.add("is-visible");
           submitBtn.disabled = false;
           submitBtn.textContent = originalText;
+          errorBox.focus({ preventScroll: true });
+          scrollToEl(errorBox);
         });
     });
+    // Enhance validation only after the handler exists. Without JavaScript,
+    // the same form keeps the browser's validation and native POST behaviour.
+    form.noValidate = true;
   }
 
   /* ---------- Year (footer is static 2026 per brief; left as-is) ---------- */

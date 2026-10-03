@@ -274,28 +274,23 @@ if (forms.length === 0) {
     }
   }
 
-  // The "Request a Quote" CTA must deep-link to the form with a ?type= value
-  // that matches a real enquiry type, so business visitors arrive preclassified
-  // instead of as unclassified enquiries.
+  // Every service CTA must carry a known choice AND a real native fragment.
+  // The quote CTA also remains classified, rather than silently generic.
   const knownTypes = typeOptionValues.map((v) => v.trim().toLowerCase()).filter(Boolean);
   let quoteLinked = false;
   for (const m of indexHtml.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a\s*>/gi)) {
-    if (!/Request a Quote/.test(m[2])) continue;
+    const quote = /Request a Quote/.test(m[2]);
+    const dataType = /data-type="([^"]*)"/i.exec(m[1])?.[1];
+    if (!quote && dataType === undefined) continue;
     const href = /href="([^"]*)"/i.exec(m[1])?.[1] ?? "";
-    const dataType = /data-type="([^"]*)"/i.exec(m[1])?.[1] ?? "";
-    const rawParam = /[?#&]type=([^"&#\s]*)/i.exec(href)?.[1] ?? "";
-    const want = [dataType.trim().toLowerCase(), (decodeSafe(rawParam.replace(/\+/g, " ")) ?? "").trim().toLowerCase()];
-    if (!/^#enquiry\?/.test(href) || !want[0] || !knownTypes.includes(want[0]) || !want[1] || !knownTypes.includes(want[1])) {
-      fail(
-        "C3",
-        `"Request a Quote" CTA must deep-link like href="#enquiry?type=…" with a data-type matching a real enquiry type (found href="${href}" data-type="${dataType}")`
-      );
-    } else {
-      quoteLinked = true;
+    const valid = href === "#enquiry" && knownTypes.includes((dataType ?? "").trim().toLowerCase());
+    if (!valid) {
+      fail("C3", `${quote ? '"Request a Quote" CTA' : "Service CTA"} must deep-link to href="#enquiry" with a data-type matching a real enquiry type (found href="${href}" data-type="${dataType ?? ""}")`);
     }
+    if (quote && valid) quoteLinked = true;
   }
   if (!quoteLinked) {
-    fail("C3", '"Request a Quote" CTA with a valid ?type= deep link is missing from index.html');
+    fail("C3", '"Request a Quote" CTA with a valid classified enquiry link is missing from index.html');
   }
 }
 
