@@ -401,8 +401,8 @@ if (!privacyTag) {
   if (!/Formspree/.test(privacyText)) {
     fail("C8", "#privacy section does not name Formspree, the form service that receives enquiry details");
   }
-  if (!/error monitoring/i.test(privacyText)) {
-    fail("C8", "#privacy section does not mention the page's error monitoring");
+  if (!/error monitoring/i.test(privacyText) || !/Sentry/.test(privacyText)) {
+    fail("C8", "#privacy section does not mention the page's error monitoring by name (Sentry)");
   }
   const privacyLinks = tags.filter((t) => t.name === "a" && t.attrs.href === "#privacy");
   if (privacyLinks.length < 2) {
@@ -516,7 +516,7 @@ const CHECK_LABELS = {
   C5: "WCAG AA theme colour pairs",
   C6: "favicon / robots / sitemap references",
   C7: "structural a11y regressions (footer heading level, floating WhatsApp landmark/focus/label) — regression coverage, not an axe substitute",
-  C8: "privacy disclosure (#privacy names the form service and error monitoring, linked from the form and footer)"
+  C8: "privacy disclosure (#privacy names the form service and the error monitor, linked from the form and footer)"
 };
 
 const byCheck = new Map();
