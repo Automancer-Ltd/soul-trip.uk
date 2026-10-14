@@ -13,6 +13,7 @@
     "assets/fonts/playfair-display-latin.woff2": "e0c764a8e9e1cce92163c55bac4b2ad6cd4cf8c696ce2289ab5c41565e65b7e2",
     "assets/js/main.js": "e952602812aca8bc0a6461b2f7b23020b963f812f844124583db31d49d79e913",
     "assets/js/sentry-init.js": "d5462a63a25e9d4b56e18b191945ac6303bf53eeb896d26784b0d565bbcac2e7",
+    "data/claims.json": "65244fd05f36d7636a7b5186944d87858d43289ad32b5b06c95de4a0bde8624e",
     "docs/plans/astra-soultrip-enquiry.md": "6785af4d00705721f63fdfe181781aad7e4f7abcecf6daacc1074dbc6ecd23c6",
     "docs/plans/codex-poor-connection-weight.md": "9e7826221707ddd09045b4b3419a0b5f4bf26e2dcf6b594566303bcdd51e9c82",
     "favicon.ico": "9ce1cb51e2c246ecb25230bbb94bc08b0a1d49138f82a96ff88ccd838aaab85b",
@@ -80,10 +81,10 @@
     "robots.txt": "8ef280707d4f1a427b42061f7dd9c30d5714d877f52fd184c06cfb418128a45d",
     "scripts/check-manifest.mjs": "926ccdf701ba765f89cca04ac8f2b0d6146de5f1372e74dbc429eea77e96466b",
     "scripts/check-sentry-integration.mjs": "abcb4c07337d0144c8af97cc6c97c80cde660e4b76ee8237cf7b99808b6e470b",
-    "scripts/check-site.mjs": "940d2461e5bd3acd9a9722ded01d019c5ca8ba29d4b516d01ad962932d4e24b2",
+    "scripts/check-site.mjs": "1b622fb8c75608cd5c388c3eccdc6e279b31f870203ac7bc3c89b9e858886aba",
     "scripts/generate-manifest.mjs": "0467d404152b7e9b4491da9924161380f7ca4a4c59ecf3b84ad696feb3cac513",
     "scripts/site-contract-lib.mjs": "766f0602bbc44b02d5144dfb6e31c9fa13016cb5642177896c7053bfcbe93d2e",
-    "scripts/test-negative-controls.mjs": "c4673d89a90270d4b2111bb472a1d8d2c5e151f3ffb3030d1c73def955388672",
+    "scripts/test-negative-controls.mjs": "34b31f3a454c48332b7c808f7ac65ebb53644c8e2b53313173b632c5e5438724",
     "scripts/verify-production.mjs": "33354596253bb43974c4624ba334cdc723d14fa5fbfcdea41027af204b63f211",
     "sitemap.xml": "498f6ecdc4b253762167269fdc7daf3229931f6ed30b452a740b5de71faf266d"
   }

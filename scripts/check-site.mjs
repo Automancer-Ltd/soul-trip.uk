@@ -465,6 +465,169 @@ if (css !== null) {
   }
 }
 
+// C9 — claims register. VISION.md: "Nothing on it is untrue" and claims are
+// "continuously re-checked against what the company can defend." The register
+// (data/claims.json) is that re-check's machine-readable form: every factual
+// public claim on the page is listed with the source the company supplied
+// for it, or explicitly marked needs-company-source. This check does NOT
+// judge whether a claim is true — only that no factual claim can appear,
+// change, or vanish without the register changing with it.
+// Claim-like text is: (a) every declarative sentence in the visible copy
+// (plus title/meta descriptions), other than the non-factual sentences
+// below (slogans, beliefs/sentiments, visitor instructions, questions and
+// form outcome messages — none asserts a fact about the company or the
+// world that a challenger could ask the company to evidence); (b) every
+// service/partnership list item (an offered service is a factual claim);
+// (c) any visible block carrying a credential, quantity, guarantee,
+// superlative or trust trigger, even without sentence punctuation.
+const NON_FACTUAL_SENTENCES = new Set([
+  "Reconnect With Your Soul.",
+  "Discover New Opportunities.",
+  "Experience Saudi Arabia.",
+  "Reconnect Spiritually.",
+  "Explore Globally.",
+  "At SoulTrip Travel and Tours Ltd, we believe travel should transform both the heart and the mind.",
+  "We understand the importance of Hajj and Umrah and the emotions connected to these blessed journeys.",
+  "We understand that organising international travel, spiritual journeys, or business trips can sometimes feel overwhelming — which is why we aim to take away the stress and handle every detail for you.",
+  "Fields marked * are required.",
+  "Choose the service you would like to discuss.",
+  "Travel dates and group size can be left blank if you are still deciding.",
+  "We couldn’t confirm your enquiry was received.",
+  "Your details are still in the form.",
+  "You can try again, or contact us directly.",
+  "If you get in touch, mention that you tried the form so we can check for your enquiry.",
+  "Thank you.",
+  "Your enquiry has been received.",
+  "Need a faster response?",
+  "Message us on WhatsApp."
+]);
+const CLAIM_TRIGGER = /(\d|guarantee|trusted|specialist|officially registered|competitive|leading|world'?s|expertise|tailor-made|personalised travel|professional & reliable|registered office|company number)/i;
+
+function decodePageEntities(value) {
+  return value
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#0?39;|&apos;/g, "'")
+    .replace(/&nbsp;/g, " ");
+}
+function normalizeClaimText(value) {
+  return decodePageEntities(String(value)).replace(/\s+/g, " ").replace(/\s+([.,!?;:])/g, "$1").trim();
+}
+function visibleTextBlocks(html) {
+  const withoutNoise = html
+    .replace(/<!--[\s\S]*?-->/g, " ")
+    .replace(/<(script|style|noscript)\b[^>]*>[\s\S]*?<\/\1\s*>/gi, " ");
+  const blockBroken = withoutNoise
+    .replace(/<\/(p|h[1-6]|li|figcaption|button|option|section|div)>/gi, "\n")
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<[^>]*>/g, " ");
+  return blockBroken.split("\n").map(normalizeClaimText).filter(Boolean);
+}
+function sentencesOf(block) {
+  const parts = block.match(/[^.!?]+[.!?]+["']?|[^.!?]+$/g) ?? [];
+  const merged = [];
+  for (const part of parts.map(normalizeClaimText).filter(Boolean)) {
+    if (merged.length && /(?:\bLtd|\bCo|\bNo)$/.test(merged[merged.length - 1].replace(/[.!?]+$/, ""))) {
+      merged[merged.length - 1] = `${merged[merged.length - 1]} ${part}`;
+    } else {
+      merged.push(part);
+    }
+  }
+  return merged;
+}
+
+let claimsCount = 0;
+let claimsNeedingSource = 0;
+const claimsRaw = await loadText("data/claims.json");
+if (claimsRaw === null) {
+  fail("C9", "data/claims.json is missing; the claims register is required (VISION: claims re-checked against what the company can defend)");
+} else {
+  let claims = null;
+  try {
+    const parsed = JSON.parse(claimsRaw);
+    if (!parsed || !Array.isArray(parsed.claims)) throw new Error("top-level \"claims\" array missing");
+    claims = parsed.claims;
+  } catch (error) {
+    fail("C9", `data/claims.json is not a valid claims register: ${error.message}`);
+  }
+  if (claims) {
+    claimsCount = claims.length;
+    const seenIds = new Set();
+    const seenTexts = new Set();
+    const registeredTexts = [];
+    for (const [i, claim] of claims.entries()) {
+      const where = `data/claims.json claims[${i}]${claim && claim.id ? ` (${claim.id})` : ""}`;
+      if (!claim || typeof claim !== "object") { fail("C9", `${where}: claim is not an object`); continue; }
+      if (!claim.id || seenIds.has(claim.id)) fail("C9", `${where}: id is missing or duplicated`);
+      seenIds.add(claim.id);
+      if (!claim.exact_text || !normalizeClaimText(claim.exact_text)) fail("C9", `${where}: exact_text is missing`);
+      else if (seenTexts.has(normalizeClaimText(claim.exact_text))) fail("C9", `${where}: exact_text is duplicated`);
+      else { seenTexts.add(normalizeClaimText(claim.exact_text)); registeredTexts.push(normalizeClaimText(claim.exact_text)); }
+      if (!claim.location) fail("C9", `${where}: location is missing`);
+      if (!["sourced", "needs-company-source"].includes(claim.status)) fail("C9", `${where}: status must be "sourced" or "needs-company-source"`);
+      if (claim.status === "needs-company-source" && claim.source !== null) fail("C9", `${where}: a needs-company-source claim must have source: null (do not invent a source)`);
+      if (claim.status === "sourced" && !(typeof claim.source === "string" && claim.source.trim())) fail("C9", `${where}: a sourced claim must name its source`);
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(claim.review_date ?? "")) fail("C9", `${where}: review_date must be an ISO date (YYYY-MM-DD)`);
+      if (claim.status === "needs-company-source") claimsNeedingSource++;
+    }
+
+    const metaTexts = tags
+      .filter((t) => t.name === "meta" && (t.attrs.name === "description" || (t.attrs.property ?? "").startsWith("og:")) && t.attrs.content)
+      .map((t) => normalizeClaimText(t.attrs.content));
+    const titleText = normalizeClaimText(/<title>([\s\S]*?)<\/title>/i.exec(indexHtml)?.[1] ?? "");
+    const blocks = [...metaTexts, titleText, ...visibleTextBlocks(indexHtml)].filter(Boolean);
+    const pageText = blocks.join(" ");
+
+    // (1) Every registered claim still matches the page, word for word.
+    for (const text of registeredTexts) {
+      if (!pageText.includes(text)) {
+        fail("C9", `registered claim no longer matches the page: "${text.slice(0, 90)}${text.length > 90 ? "…" : ""}" — update the register and the page together, with a company source`);
+      }
+    }
+    const isRegistered = (text) => registeredTexts.some((r) => r === text || r.includes(text) || text.includes(r));
+
+    // (2) Every declarative sentence is registered or explicitly non-factual.
+    for (const block of blocks) {
+      for (const sentence of sentencesOf(block)) {
+        if (sentence.split(" ").length < 4) continue;
+        if (!/[.!?]$/.test(sentence)) continue;
+        if (NON_FACTUAL_SENTENCES.has(sentence)) continue;
+        if (!isRegistered(sentence)) {
+          fail("C9", `claim-like sentence on the page is not in the claims register: "${sentence.slice(0, 90)}${sentence.length > 90 ? "…" : ""}" — add it to data/claims.json with a company source or needs-company-source`);
+        }
+      }
+    }
+
+    // (3) Service and partnership list items are offered-service claims.
+    for (const listMatch of indexHtml.matchAll(/<ul class="(?:chip-list|check-grid)">([\s\S]*?)<\/ul>/gi)) {
+      for (const itemMatch of listMatch[1].matchAll(/<li>([\s\S]*?)<\/li>/gi)) {
+        const item = normalizeClaimText(itemMatch[1].replace(/<[^>]*>/g, " "));
+        if (item && !isRegistered(item)) {
+          fail("C9", `offered service/partnership item is not in the claims register: "${item}" — add it to data/claims.json`);
+        }
+      }
+    }
+    for (const featMatch of indexHtml.matchAll(/<div class="hajj-feat">([\s\S]*?)<\/div>/gi)) {
+      const item = normalizeClaimText(featMatch[1].replace(/<svg[\s\S]*?<\/svg>/gi, " ").replace(/<[^>]*>/g, " "));
+      if (item && !isRegistered(item)) {
+        fail("C9", `package-inclusion item is not in the claims register: "${item}" — add it to data/claims.json`);
+      }
+    }
+
+    // (4) Credential/quantity/guarantee blocks are claims even as fragments.
+    for (const block of blocks) {
+      if (!CLAIM_TRIGGER.test(block)) continue;
+      if (NON_FACTUAL_SENTENCES.has(block)) continue;
+      if (!isRegistered(block) && !sentencesOf(block).some((s) => isRegistered(s))) {
+        fail("C9", `claim-like text on the page is not in the claims register: "${block.slice(0, 90)}${block.length > 90 ? "…" : ""}" — add it to data/claims.json`);
+      }
+    }
+  }
+}
+console.log(`check-site: claims register: ${claimsCount} claim(s), ${claimsNeedingSource} need(s) company source (printed, not a failure)`);
+
 const CHECK_LABELS = {
   C1: "internal references & fragment anchors",
   C2: "image alt text",
@@ -472,7 +635,8 @@ const CHECK_LABELS = {
   C4: "Sentry integration wired",
   C5: "WCAG AA theme colour pairs",
   C6: "favicon / robots / sitemap references",
-  C7: "structural a11y regressions (footer heading level, floating WhatsApp landmark/focus/label) — regression coverage, not an axe substitute"
+  C7: "structural a11y regressions (footer heading level, floating WhatsApp landmark/focus/label) — regression coverage, not an axe substitute",
+  C9: "claims register (every factual claim in data/claims.json, matching the page; sourced or needs-company-source)"
 };
 
 const byCheck = new Map();

@@ -1,0 +1,671 @@
+{
+  "version": 1,
+  "register": "Public factual claims made by soul-trip.uk (index.html, including title and meta descriptions).",
+  "how_to_source_a_claim": "The company supplies the evidence it can defend for the claim, a reviewer sets source to that evidence and status to sourced, and updates review_date. Never set sourced without company-supplied evidence.",
+  "claims": [
+    {
+      "id": "CLM-001",
+      "exact_text": "SoulTrip Travel and Tours Ltd — trusted UK & Saudi-based specialists in Hajj & Umrah, spiritual journeys, business travel, hotels, transport and Vision 2030 opportunities across Saudi Arabia.",
+      "location": "index.html:7 (Meta description)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-002",
+      "exact_text": "Spiritually enriching journeys, premium Hajj & Umrah, business travel and tailored Saudi Arabia experiences aligned with Vision 2030.",
+      "location": "index.html:13 (Open Graph description)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-003",
+      "exact_text": "SoulTrip Travel and Tours Ltd offers spiritually enriching journeys, premium Hajj & Umrah experiences, business travel solutions, trade delegation support, hotel bookings, transportation services, and tailored Saudi Arabia travel experiences aligned with the exciting future of Vision 2030.",
+      "location": "index.html:82 (Hero)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-004",
+      "exact_text": "Trusted UK & Saudi-based travel specialists offering spiritual journeys, Hajj & Umrah packages, business travel support, hotels, transport, exhibitions, and investment trips throughout Saudi Arabia.",
+      "location": "index.html:100 (Intro)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-005",
+      "exact_text": "Working with officially registered Saudi partners built on over 15 years of trusted relationships, we focus on customer satisfaction, ease, reliability, and competitive pricing — taking the stress away so you can focus on your journey.",
+      "location": "index.html:101 (Intro)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-006",
+      "exact_text": "Our mission is to help individuals, families, entrepreneurs, and organisations reconnect spiritually while also exploring the incredible opportunities emerging across Saudi Arabia through Vision 2030.",
+      "location": "index.html:114 (About)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-007",
+      "exact_text": "we provide a seamless, personalised, and premium travel experience designed around your needs.",
+      "location": "index.html:128 (About)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-008",
+      "exact_text": "We combine spiritual journeys with modern travel solutions, helping our clients discover both purpose and opportunity.",
+      "location": "index.html:128 (About)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-009",
+      "exact_text": "Reconnect with your faith and inner peace through carefully curated spiritual experiences.",
+      "location": "index.html:154 (Services — Spiritual Journeys)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-010",
+      "exact_text": "Saudi Arabia is rapidly becoming one of the world's leading destinations for business, innovation, tourism, and investment.",
+      "location": "index.html:176 (Services — Business Travel)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-011",
+      "exact_text": "Premium accommodation solutions across Saudi Arabia.",
+      "location": "index.html:200 (Services — Hotels & Accommodation)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-012",
+      "exact_text": "Reliable transportation tailored to your journey.",
+      "location": "index.html:220 (Services — Transportation)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-013",
+      "exact_text": "Personalised Travel Experiences",
+      "location": "index.html:252 (Why Choose SoulTrip?)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-014",
+      "exact_text": "Spiritual & Business Expertise",
+      "location": "index.html:256 (Why Choose SoulTrip?)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-015",
+      "exact_text": "Trusted Saudi Arabia Travel Knowledge",
+      "location": "index.html:260 (Why Choose SoulTrip?)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-016",
+      "exact_text": "Professional & Reliable Service",
+      "location": "index.html:264 (Why Choose SoulTrip?)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-017",
+      "exact_text": "Tailor-Made Packages",
+      "location": "index.html:268 (Why Choose SoulTrip?)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-018",
+      "exact_text": "Strong Focus on Comfort, Purpose & Growth",
+      "location": "index.html:272 (Why Choose SoulTrip?)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-019",
+      "exact_text": "Saudi Arabia is opening its doors to the world through Vision 2030 — creating exciting opportunities in tourism, technology, hospitality, construction, trade, sports, and investment.",
+      "location": "index.html:287 (Vision 2030)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-020",
+      "exact_text": "With global events including the upcoming FIFA World Cup and rapid national development, now is the perfect time to explore Saudi Arabia for both spiritual enrichment and business growth.",
+      "location": "index.html:288 (Vision 2030)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-021",
+      "exact_text": "SoulTrip helps you navigate these opportunities with confidence.",
+      "location": "index.html:289 (Vision 2030)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-022",
+      "exact_text": "Our team aims to make your experience peaceful, comfortable, organised, and spiritually uplifting from beginning to end.",
+      "location": "index.html:321 (Hajj & Umrah)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-023",
+      "exact_text": "15+ Years of Trust",
+      "location": "index.html:352 (Partnerships)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-024",
+      "exact_text": "Trusted Partnerships Across Saudi Arabia",
+      "location": "index.html:353 (Partnerships)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-025",
+      "exact_text": "At SoulTrip Travel and Tours Ltd, we proudly work alongside officially registered and trusted business partners based in Saudi Arabia, with over 15 years of strong relationships and experience built on trust, professionalism, and reliability.",
+      "location": "index.html:355 (Partnerships)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-026",
+      "exact_text": "Whether you are travelling for spiritual purposes, tourism, or business expansion, you can travel with confidence knowing you are supported both in the UK and within Saudi Arabia.",
+      "location": "index.html:366 (Partnerships)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-027",
+      "exact_text": "Our main priority is customer satisfaction, comfort, and ease.",
+      "location": "index.html:378 (Customer Commitment)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-028",
+      "exact_text": "From flights and hotels to transport and local arrangements, our goal is to provide a smooth, professional, and hassle-free experience from beginning to end.",
+      "location": "index.html:380 (Customer Commitment)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-029",
+      "exact_text": "Competitive Pricing",
+      "location": "index.html:388 (Price Match)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-030",
+      "exact_text": "Try Our Price Match Guarantee",
+      "location": "index.html:389 (Price Match)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-031",
+      "exact_text": "We are committed to offering exceptional value without compromising on quality or service.",
+      "location": "index.html:392 (Price Match)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-032",
+      "exact_text": "If you receive a like-for-like quote elsewhere, speak to our team about our Price Match Guarantee — because we aim to provide some of the most competitive prices available while still delivering a premium experience.",
+      "location": "index.html:393 (Price Match)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-033",
+      "exact_text": "Affordable. Reliable. Professional.",
+      "location": "index.html:395 (Price Match)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-034",
+      "exact_text": "Tell us about your trip and our team will respond within one working day.",
+      "location": "index.html:409 (Enquiry)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-035",
+      "exact_text": "We respond within one working day, inshaAllah.",
+      "location": "index.html:487 (Enquiry form)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-036",
+      "exact_text": "Our team will be in touch within one working day, inshaAllah.",
+      "location": "index.html:494 (Enquiry success panel)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-037",
+      "exact_text": "Phone: +44 7577 177172",
+      "location": "index.html:531 (Footer contact)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-038",
+      "exact_text": "Email: info@soul-trip.uk",
+      "location": "index.html:532 (Footer contact)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-039",
+      "exact_text": "WhatsApp: +44 7577 177172",
+      "location": "index.html:533 (Footer contact)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-040",
+      "exact_text": "© 2026 Soul Trip Travel and Tours Ltd. All rights reserved.",
+      "location": "index.html:547 (Footer)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-041",
+      "exact_text": "· Trusted UK & Saudi-based travel specialists.",
+      "location": "index.html:547 (Footer)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-042",
+      "exact_text": "SOUL TRIP TRAVEL AND TOURS LTD is a company registered in England & Wales.",
+      "location": "index.html:548 (Footer legal)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-043",
+      "exact_text": "Company number 16843871.",
+      "location": "index.html:548 (Footer legal)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-044",
+      "exact_text": "Registered office: 71-75 Shelton Street, Covent Garden, London, WC2H 9JQ.",
+      "location": "index.html:548 (Footer legal)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-045",
+      "exact_text": "Vision 2030 Opportunities",
+      "location": "index.html:524 (Footer links)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-046",
+      "exact_text": "Hajj Packages",
+      "location": "index.html:157 (Services — Spiritual Journeys list)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-047",
+      "exact_text": "Umrah Packages",
+      "location": "index.html:158 (Services — Spiritual Journeys list)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-048",
+      "exact_text": "Islamic Heritage Tours",
+      "location": "index.html:159 (Services — Spiritual Journeys list)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-049",
+      "exact_text": "Group Spiritual Retreats",
+      "location": "index.html:160 (Services — Spiritual Journeys list)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-050",
+      "exact_text": "Family Religious Tours",
+      "location": "index.html:161 (Services — Spiritual Journeys list)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-051",
+      "exact_text": "VIP & Custom Packages",
+      "location": "index.html:162 (Services — Spiritual Journeys list)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-052",
+      "exact_text": "Business Travel Planning",
+      "location": "index.html:179 (Services — Business Travel list)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-053",
+      "exact_text": "Trade Show & Exhibition Visits",
+      "location": "index.html:180 (Services — Business Travel list)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-054",
+      "exact_text": "Corporate Delegations",
+      "location": "index.html:181 (Services — Business Travel list)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-055",
+      "exact_text": "Networking Trips",
+      "location": "index.html:182 (Services — Business Travel list)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-056",
+      "exact_text": "Market Exploration Visits",
+      "location": "index.html:183 (Services — Business Travel list)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-057",
+      "exact_text": "Export & Import Support",
+      "location": "index.html:184 (Services — Business Travel list)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-058",
+      "exact_text": "Relocation Guidance",
+      "location": "index.html:185 (Services — Business Travel list)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-059",
+      "exact_text": "Property Viewing Trips",
+      "location": "index.html:186 (Services — Business Travel list)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-060",
+      "exact_text": "Investor Visits",
+      "location": "index.html:187 (Services — Business Travel list)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-061",
+      "exact_text": "Luxury Hotels",
+      "location": "index.html:203 (Services — Hotels & Accommodation list)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-062",
+      "exact_text": "Family Accommodation",
+      "location": "index.html:204 (Services — Hotels & Accommodation list)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-063",
+      "exact_text": "Executive Business Stays",
+      "location": "index.html:205 (Services — Hotels & Accommodation list)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-064",
+      "exact_text": "Short & Long-Term Bookings",
+      "location": "index.html:206 (Services — Hotels & Accommodation list)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-065",
+      "exact_text": "Group Accommodation",
+      "location": "index.html:207 (Services — Hotels & Accommodation list)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-066",
+      "exact_text": "Airport Transfers",
+      "location": "index.html:223 (Services — Transportation list)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-067",
+      "exact_text": "Chauffeur Services",
+      "location": "index.html:224 (Services — Transportation list)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-068",
+      "exact_text": "Group Coaches",
+      "location": "index.html:225 (Services — Transportation list)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-069",
+      "exact_text": "VIP Transport",
+      "location": "index.html:226 (Services — Transportation list)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-070",
+      "exact_text": "Intercity Travel",
+      "location": "index.html:227 (Services — Transportation list)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-071",
+      "exact_text": "Business Transport Solutions",
+      "location": "index.html:228 (Services — Transportation list)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-072",
+      "exact_text": "Reliable local support",
+      "location": "index.html:359 (Partnerships list)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-073",
+      "exact_text": "Trusted accommodation providers",
+      "location": "index.html:360 (Partnerships list)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-074",
+      "exact_text": "Professional transportation services",
+      "location": "index.html:361 (Partnerships list)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-075",
+      "exact_text": "Business networking opportunities",
+      "location": "index.html:362 (Partnerships list)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-076",
+      "exact_text": "Access to exhibitions and trade events",
+      "location": "index.html:363 (Partnerships list)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-077",
+      "exact_text": "Local guidance and assistance throughout your journey",
+      "location": "index.html:364 (Partnerships list)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-078",
+      "exact_text": "Flights",
+      "location": "index.html:325 (Hajj & Umrah — packages can include)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-079",
+      "exact_text": "Hotels",
+      "location": "index.html:199 (Hajj & Umrah — packages can include)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-080",
+      "exact_text": "Visa Assistance",
+      "location": "index.html:327 (Hajj & Umrah — packages can include)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-081",
+      "exact_text": "Guided Support",
+      "location": "index.html:328 (Hajj & Umrah — packages can include)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-082",
+      "exact_text": "Ground Transportation",
+      "location": "index.html:329 (Hajj & Umrah — packages can include)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    },
+    {
+      "id": "CLM-083",
+      "exact_text": "Group & Private Packages",
+      "location": "index.html:330 (Hajj & Umrah — packages can include)",
+      "source": null,
+      "status": "needs-company-source",
+      "review_date": "2026-10-14"
+    }
+  ]
+}

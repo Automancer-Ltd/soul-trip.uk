@@ -1193,6 +1193,27 @@ await test("T53", "hostile origin: live /CNAME bytes differing from the manifest
   }
 });
 
+await test("T57", "sabotage: a page claim edited without the register (15 years → 20 years) → C9 names both the stale register entry and the unregistered sentence", async () => {
+  const dir = await makeCopy("soultrip-negctl-claims-");
+  try {
+    await sabotageInCopy(dir, "index.html", [
+      ["built on over 15 years of trusted relationships", "built on over 20 years of trusted relationships"]
+    ]);
+    const r = await checkSite(dir);
+    return {
+      pass:
+        r.code === 1 &&
+        /\[C9\]/.test(r.out) &&
+        /registered claim no longer matches the page/.test(r.out) &&
+        /claim-like sentence on the page is not in the claims register/.test(r.out) &&
+        /20 years/.test(r.out),
+      evidence: `exit=${r.code}`
+    };
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
 console.log("\nnegative-control suite results:");
 let failures = 0;
 for (const r of results) {
