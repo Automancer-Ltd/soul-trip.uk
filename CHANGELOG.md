@@ -1,5 +1,15 @@
 # Release notes
 
+## v2026.10.14.1 — 14 October 2026
+
+Soul Trip’s privacy information now explains what happens to enquiry details and error reports.
+
+### Your privacy
+
+- Read how enquiry details are sent and what happens if a message cannot be sent.
+- See how error reports are handled to protect personal details.
+
+
 ## v2026.10.03.1 — 3 October 2026
 
 ### Explore our services
