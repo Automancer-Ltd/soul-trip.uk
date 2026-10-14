@@ -1193,6 +1193,26 @@ await test("T53", "hostile origin: live /CNAME bytes differing from the manifest
   }
 });
 
+await test("T56", "sabotage: privacy section stops naming the form service → C8 names the missing disclosure only", async () => {
+  const dir = await makeCopy("soultrip-negctl-privacy-");
+  try {
+    await sabotageInCopy(dir, "index.html", [
+      ["your details go through Formspree. Formspree is the form service", "your details go through the form service"]
+    ]);
+    const r = await checkSite(dir);
+    return {
+      pass:
+        r.code === 1 &&
+        /does not name Formspree/.test(r.out) &&
+        !/does not mention the page's error monitoring/.test(r.out) &&
+        !/#privacy disclosure section is missing/.test(r.out),
+      evidence: `exit=${r.code}`
+    };
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
 console.log("\nnegative-control suite results:");
 let failures = 0;
 for (const r of results) {

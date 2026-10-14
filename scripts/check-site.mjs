@@ -382,6 +382,49 @@ if (!footerOpen || footerCloseOffset === -1) {
   }
 }
 
+// C8 — privacy disclosure. The enquiry collects personal details and sends
+// them through a third-party form service, and the page reports browser
+// errors to a third-party monitor. A visitor must be able to learn both
+// before submitting: a #privacy section that names the form service and
+// mentions error monitoring, linked from inside the form (before they send)
+// and from the footer (where company disclosure already lives).
+const privacyTag = tags.find((t) => t.attrs.id === "privacy");
+if (!privacyTag) {
+  fail("C8", "#privacy disclosure section is missing from index.html; visitors are not told how enquiry details are used");
+} else {
+  const privacyStart = indexHtml.toLowerCase().indexOf('id="privacy"');
+  const privacyEnd = indexHtml.toLowerCase().indexOf("</section", privacyStart);
+  const privacyText = indexHtml
+    .slice(privacyStart, privacyEnd === -1 ? undefined : privacyEnd)
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ");
+  if (!/Formspree/.test(privacyText)) {
+    fail("C8", "#privacy section does not name Formspree, the form service that receives enquiry details");
+  }
+  if (!/error monitoring/i.test(privacyText)) {
+    fail("C8", "#privacy section does not mention the page's error monitoring");
+  }
+  const privacyLinks = tags.filter((t) => t.name === "a" && t.attrs.href === "#privacy");
+  if (privacyLinks.length < 2) {
+    fail("C8", `#privacy must be linked from inside the enquiry form and from the footer (found ${privacyLinks.length} link(s))`);
+  } else {
+    const formTag = forms[0];
+    const formCloseLine = (() => {
+      const i = indexHtml.toLowerCase().indexOf("</form");
+      return i === -1 ? -1 : indexHtml.slice(0, i).split("\n").length;
+    })();
+    if (formTag && !privacyLinks.some((t) => t.line >= formTag.line && t.line <= formCloseLine)) {
+      fail("C8", "no #privacy link inside the enquiry form; visitors cannot read how their details are used before submitting");
+    }
+    if (footerOpen) {
+      const footerEndLine2 = indexHtml.slice(0, footerCloseOffset).split("\n").length;
+      if (!privacyLinks.some((t) => t.line >= footerOpen.line && t.line <= footerEndLine2)) {
+        fail("C8", "no #privacy link inside the <footer>; the disclosure is not reachable from the footer");
+      }
+    }
+  }
+}
+
 const css = await loadText("assets/css/styles.css");
 if (css === null) {
   fail("C5", "assets/css/styles.css is missing; theme colour contract unverifiable");
@@ -472,7 +515,8 @@ const CHECK_LABELS = {
   C4: "Sentry integration wired",
   C5: "WCAG AA theme colour pairs",
   C6: "favicon / robots / sitemap references",
-  C7: "structural a11y regressions (footer heading level, floating WhatsApp landmark/focus/label) — regression coverage, not an axe substitute"
+  C7: "structural a11y regressions (footer heading level, floating WhatsApp landmark/focus/label) — regression coverage, not an axe substitute",
+  C8: "privacy disclosure (#privacy names the form service and error monitoring, linked from the form and footer)"
 };
 
 const byCheck = new Map();

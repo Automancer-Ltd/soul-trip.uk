@@ -735,6 +735,14 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; line-height: 1.
 }
 
 /* ============================================================
+   Privacy disclosure
+   ============================================================ */
+.privacy .wrap { max-width: 820px; }
+.privacy__body { margin-block-start: clamp(1.1rem, 2vw, 1.5rem); }
+.privacy__body p { color: var(--ink-600); margin-block: 0 1.25rem; font-size: 1.125rem; }
+.privacy__body a { color: var(--emerald-700); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+
+/* ============================================================
    Price Match band
    ============================================================ */
 .price {
@@ -858,6 +866,7 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; line-height: 1.
   margin: 0.75rem 0 0;
   text-align: center;
 }
+.form-note a { color: var(--emerald-700); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 .form-error {
   grid-column: 1 / -1;
   background: #fbeaea;
@@ -974,6 +983,8 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; line-height: 1.
   color: rgba(246, 239, 226, 0.7);
 }
 .footer__bottom .footer__legal strong { color: rgba(246, 239, 226, 0.9); font-weight: 600; }
+.footer__privacy-link { margin-block-start: 0.75rem; }
+.footer__privacy-link a { color: var(--gold-300); text-decoration: underline; text-underline-offset: 3px; }
 
 /* ============================================================
    Floating WhatsApp
