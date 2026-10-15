@@ -45,6 +45,12 @@ jobs:
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
+          fetch-depth: 0
+
+      - name: check unbounded outside calls
+        uses: Automancer-Ltd/estate-checks@d5f9c888a1ea5580db9f7a9f380b059ffeaaddce # v1.2.1
+        with:
+          exclude-paths: "scripts/test-negative-controls.mjs"
 
       - uses: actions/setup-node@v7
         with:
@@ -65,24 +71,11 @@ jobs:
       - name: Negative-control suite — every checker proven able to fail; purity proofs for read-only commands
         run: node scripts/test-negative-controls.mjs
 
-  unbounded-calls:
-    name: check unbounded outside calls
-    runs-on: ${{ fromJSON(vars.CI_RUNNER || '"ubuntu-24.04"') }}
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-      - name: check unbounded outside calls
-        uses: Automancer-Ltd/estate-checks@d5f9c888a1ea5580db9f7a9f380b059ffeaaddce # v1.2.1
-        with:
-          exclude-paths: "scripts/test-negative-controls.mjs"
-
   # ---------------------------------------------------------------------------
   # Publish. Only from `main`, only on a push, and only after `verify` is green.
   # ---------------------------------------------------------------------------
   build:
-    needs: [verify, unbounded-calls]
+    needs: verify
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ${{ fromJSON(vars.CI_RUNNER || '"ubuntu-24.04"') }}
     timeout-minutes: 10
