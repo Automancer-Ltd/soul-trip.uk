@@ -27,6 +27,7 @@ def run_cmd(args: list[str]) -> tuple[int, str]:
         capture_output=True,
         text=True,
         check=False,
+        timeout=60,
     )
     out = (res.stdout + "\n" + res.stderr).strip()
     return res.returncode, out
