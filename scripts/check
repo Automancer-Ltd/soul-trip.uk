@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT_DIR"
+
+export PYTHONDONTWRITEBYTECODE=1
+MYPY_CACHE="${TMPDIR:-/tmp}/mypy-cache-soul-trip-uk"
+
+if command -v mypy >/dev/null 2>&1; then
+  mypy --cache-dir "$MYPY_CACHE" --config-file pyproject.toml
+else
+  uvx --offline mypy --cache-dir "$MYPY_CACHE" --config-file pyproject.toml
+fi
+
+python3 -B scripts/verify_repo_meta.py
+python3 -B -m unittest discover -s tests -v
+node scripts/check-manifest.mjs
+node scripts/check-site.mjs
+node scripts/check-sentry-integration.mjs --expect-active
+node scripts/verify-production.mjs --prove-verification
+
+echo "lint + typecheck + test: PASS"

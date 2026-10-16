@@ -18,9 +18,9 @@ name: site-contract
 # ungated behaviour above. (Pages source re-checked: gh api
 # repos/Automancer-Ltd/soul-trip.uk/pages --jq .build_type == "workflow".)
 #
-# Last verified: 2026-09-25 on automancer-vps (scripts: node scripts/check-manifest.mjs,
-# node scripts/check-site.mjs, node scripts/verify-production.mjs --prove-verification;
-# pins: git ls-remote https://github.com/actions/<name>.git refs/tags/<v>)
+# Last verified: 2026-10-16 on automancer-vps (scripts: ./scripts/check,
+# node scripts/check-manifest.mjs, node scripts/check-site.mjs,
+# node scripts/verify-production.mjs --prove-verification)
 
 on:
   push:
@@ -55,6 +55,20 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: 24
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.14"
+
+      - name: Install typecheck and lint runner
+        timeout-minutes: 3
+        run: python3 -m pip install mypy==2.4.0
+
+      - name: Run typecheck, lint, and meta unit tests
+        run: |
+          PYTHONDONTWRITEBYTECODE=1 python3 -m mypy --cache-dir /tmp/mypy-cache-soultrip --config-file pyproject.toml
+          PYTHONDONTWRITEBYTECODE=1 python3 -B scripts/verify_repo_meta.py
+          PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest discover -s tests -v
 
       - name: Published-artifact manifest is fresh and canonical (read-only check)
         run: node scripts/check-manifest.mjs
