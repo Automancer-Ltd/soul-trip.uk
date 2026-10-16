@@ -15,15 +15,14 @@ formspree.json
 # Local/private project context
 .omc/
 .docs/
-docs/
 
-# Build artefacts (none today, here for safety)
+# Build / tool caches
 node_modules/
 dist/
+__pycache__/
+.mypy_cache/
 
-# Agent/internal context — must never be published by GitHub Pages
-AGENTS.md
-AGENTS.md
+# Local-only overrides
 AGENTS.local.md
 CLAUDE.local.md
 *.local.md
