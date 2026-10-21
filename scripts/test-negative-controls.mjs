@@ -682,14 +682,14 @@ await test("T34", "Sentry hostile: pinned SDK source swapped to another version 
   const { dir, fixturePath } = await makeOfflineGreenCopy("soultrip-negctl-spin-");
   try {
     await sabotageInCopy(dir, "index.html", [
-      ["https://browser.sentry-cdn.com/10.66.0/bundle.min.js", "https://browser.sentry-cdn.com/10.65.0/bundle.min.js"]
+      ["assets/js/vendor/sentry-10.66.0.bundle.min.js", "assets/js/vendor/sentry-10.65.0.bundle.min.js"]
     ]);
     const r = runSentryChecker(dir, ["--expect-active"], { SENTRY_SDK_FIXTURE: fixturePath });
     const out = r.stdout + r.stderr;
     return {
       pass:
         r.status === 1 &&
-        out.includes(`Sentry SDK is not pinned to ${"https://browser.sentry-cdn.com/10.66.0/bundle.min.js"} `) &&
+        out.includes(`Sentry SDK is not pinned to ${"assets/js/vendor/sentry-10.66.0.bundle.min.js"} `) &&
         !/does not match the sha384 of the bytes served/.test(out),
       evidence: `exit=${r.status}`
     };
@@ -802,7 +802,7 @@ await test("T41", "meta-proof: an always-success no-op checker masks a real viol
   const { dir, fixturePath } = await makeOfflineGreenCopy("soultrip-negctl-noop-");
   try {
     await sabotageInCopy(dir, "index.html", [
-      ["https://browser.sentry-cdn.com/10.66.0/bundle.min.js", "https://browser.sentry-cdn.com/10.65.0/bundle.min.js"]
+      ["assets/js/vendor/sentry-10.66.0.bundle.min.js", "assets/js/vendor/sentry-10.65.0.bundle.min.js"]
     ]);
     const pristine = runSentryChecker(dir, ["--expect-active"], { SENTRY_SDK_FIXTURE: fixturePath });
     await writeFile(path.join(dir, "scripts/check-sentry-integration.mjs"), "process.exit(0);");
