@@ -1,5 +1,10 @@
 # Release notes
 
+## v2026.10.21.3 — 21 October 2026
+
+When you share the Soul Trip website, its preview shows a Kaaba image on social platforms that display link cards.
+
+
 ## v2026.10.14.1 — 14 October 2026
 
 Soul Trip’s privacy information now explains what happens to enquiry details and error reports.
