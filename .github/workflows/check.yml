@@ -52,6 +52,32 @@ jobs:
         with:
           exclude-paths: "scripts/test-negative-controls.mjs"
 
+      # Secret scan inside the gate: `build` uploads the whole checkout to the
+      # public site, so a committed credential must stop the deploy here.
+      # Same steps as premier-mist-site-reporting's secret-scan.yml.
+      - name: Install gitleaks
+        timeout-minutes: 3
+        env:
+          GITLEAKS_VERSION: 8.30.1
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 4 --retry-delay 2 --retry-all-errors \
+            -o "$RUNNER_TEMP/gitleaks.tar.gz" \
+            "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          tar -xzf "$RUNNER_TEMP/gitleaks.tar.gz" -C "$RUNNER_TEMP" gitleaks
+          "$RUNNER_TEMP/gitleaks" version
+
+      # A config without [extend].useDefault loads fine and scans with no rules.
+      - name: Assert the gitleaks config extends the built-in ruleset
+        run: |
+          grep -Eq '^[[:space:]]*useDefault[[:space:]]*=[[:space:]]*true' .gitleaks.toml \
+            || { echo "::error file=.gitleaks.toml::[extend].useDefault is not true; the scan cannot fail."; exit 1; }
+
+      # --log-opts=HEAD: scan this branch's full history, not refs/pull/* (ci-standards).
+      - name: Scan repository history for secrets
+        run: |
+          "$RUNNER_TEMP/gitleaks" git --no-banner --redact --config .gitleaks.toml --log-opts=HEAD .
+
       - uses: actions/setup-node@v7
         with:
           node-version: 24
