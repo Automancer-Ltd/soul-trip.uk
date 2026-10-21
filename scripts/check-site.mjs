@@ -302,8 +302,8 @@ const sentryLoader = tags.find((t) => t.name === "script" && t.attrs.id === "sen
 if (!sentryLoader) {
   fail("C4", "Sentry loader <script id=\"sentry-sdk\"> missing from index.html");
 } else {
-  if (!/^https:\/\/browser\.sentry-cdn\.com\//.test(sentryLoader.attrs.src ?? "")) {
-    fail("C4", `Sentry SDK src "${sentryLoader.attrs.src ?? ""}" is not a pinned browser.sentry-cdn.com URL`);
+  if (sentryLoader.attrs.src !== "assets/js/vendor/sentry-10.66.0.bundle.min.js") {
+    fail("C4", `Sentry SDK src "${sentryLoader.attrs.src ?? ""}" is not the pinned local Sentry SDK asset`);
   }
   const integrity = String(sentryLoader.attrs.integrity ?? "");
   if (!integrity.startsWith("sha384-")) {
