@@ -244,6 +244,7 @@ const SABOTAGES = [
   ['T06', 'C2 alt attribute removed', [[/ alt="The Holy Kaaba[^"]*"/, '']], [/has no alt attribute/]],
   ['T07', 'C2 empty alt text', [[/alt="The Holy Kaaba[^"]*"/, 'alt="   "']], [/has an empty alt attribute/]],
   ['T08', 'C3 form action host off allowlist', [['https://formspree.io/p/3011773691026472174/f/enquiry', 'https://malicious.example.net/collect']], [/not on the Formspree allowlist/, /malicious\.example\.net/]],
+  ['T57', 'C3 form action points at another Formspree form', [['https://formspree.io/p/3011773691026472174/f/enquiry', 'https://formspree.io/p/3011773691026472174/f/enquirx']], [/is not the live enquiry form/]],
   ['T09', 'C3 form action downgraded to http', [['https://formspree.io/p/3011773691026472174/f/enquiry', 'http://formspree.io/p/3011773691026472174/f/enquiry']], [/is not HTTPS/]],
   ['T10', 'C3 honeypot removed', [[/<input type="text" class="hp" name="_gotcha"[^>]*\/>/, '']], [/honeypot input\[name="_gotcha"\] missing/]],
   ['T11', 'C3 required marker removed from email field', [['id="email" name="email" autocomplete="email" required', 'id="email" name="email" autocomplete="email"']], [/field "email" .*not marked required/]],
