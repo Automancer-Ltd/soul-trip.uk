@@ -14,6 +14,8 @@ import {
 } from "./site-contract-lib.mjs";
 
 const FORMSPREE_HOSTS = new Set(["formspree.io", "www.formspree.io", "submit.formspree.io"]);
+// The live Formspree form. Any other id on an allowed host is accepted by Formspree and lost.
+const ENQUIRY_ACTION = "https://formspree.io/p/3011773691026472174/f/enquiry";
 const OWN_HOSTS = new Set(["soul-trip.uk", "www.soul-trip.uk"]);
 const REQUIRED_FIELD_NAMES = ["name", "phone", "email", "type"];
 const REQUIRED_JS_SNIPPETS = [
@@ -207,6 +209,8 @@ if (forms.length === 0) {
       "C3",
       `line ${form.line}: form action host "${action.hostname}" is not on the Formspree allowlist (${[...FORMSPREE_HOSTS].join(", ")})`
     );
+  } else if (action.href !== ENQUIRY_ACTION) {
+    fail("C3", `line ${form.line}: form action "${actionRaw}" is not the live enquiry form ${ENQUIRY_ACTION}`);
   }
   const method = typeof form.attrs.method === "string" ? form.attrs.method.toUpperCase() : "";
   if (method !== "POST") fail("C3", `line ${form.line}: form method must be POST (found "${form.attrs.method ?? ""}")`);
