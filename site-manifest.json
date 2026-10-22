@@ -1,7 +1,7 @@
 {
   "algorithm": "sha256",
   "files": {
-    "AGENTS.md": "23e4bcf0e48e3b8398bbecea250ea52dd32d53f7a788d2585f633c82046f12ca",
+    "AGENTS.md": "e867475e527595090098d866f46fe6948bc666cefee30fb67956e993d6675303",
     "CNAME": "1afb0a3d33f807eb53764f054e9fdcb1fc8231ae815c7b6edfa3095155b518a0",
     "GLOSSARY.md": "fdf719be16a7d2e23515c2f8928ae689be172c0b1eb28255f66257fafbffaebb",
     "SPEC.md": "14cdeb1f58a61133c32d8a9144b1fb8b4771f0bfe4ed0457880f23d5efbdea00",

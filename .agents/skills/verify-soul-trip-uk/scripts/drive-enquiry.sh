@@ -18,6 +18,8 @@ trap cleanup EXIT
 for _ in $(seq 20); do curl -fsS "http://127.0.0.1:$PORT/" >/dev/null 2>&1 && break; sleep 0.25; done
 
 agent-browser open "http://127.0.0.1:$PORT/"
+# The page carries the live Sentry DSN: never let a local run report to production.
+agent-browser network route "https://*.ingest.de.sentry.io/**" --abort
 # Stub fetch in the page: Formspree answers 200, and the POST target is recorded.
 agent-browser eval 'window.__posts = []; window.fetch = (u, o) => { window.__posts.push([String(u), o.method]); return Promise.resolve(new Response("{}", { status: 200 })); }' >/dev/null
 agent-browser select '#type' Umrah

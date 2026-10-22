@@ -16,6 +16,10 @@ node scripts/generate-manifest.mjs   # after `git add` of any served-file change
 node scripts/verify-production.mjs --base https://soul-trip.uk/   # live site serves exactly this tree
 ```
 
+## Production signals
+
+Sentry errors and the UptimeRobot monitor: commands in the Telemetry section of `.agents/skills/verify-soul-trip-uk/SKILL.md`.
+
 ## Release
 
 A merge to `main` is the deploy: `.github/workflows/check.yml` runs `scripts/check`, publishes Pages, then its `deploy` job runs the production verifier, so a red run means production does not serve the merged tree. Release notes follow in [`.github/RELEASING.md`](.github/RELEASING.md).
