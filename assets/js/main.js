@@ -38,9 +38,15 @@
   toggle.addEventListener("click", function () {
     setMenu(!nav.classList.contains("is-open"));
   });
-  // Close menu after tapping a link
+  // Close menu after tapping a link or dismissing it outside the navigation.
   navLinks.addEventListener("click", function (e) {
     if (e.target.closest("a")) setMenu(false);
+  });
+  document.addEventListener("click", function (e) {
+    if (nav.classList.contains("is-open") &&
+        !navLinks.contains(e.target) && !toggle.contains(e.target)) {
+      setMenu(false);
+    }
   });
   // Close on Escape
   document.addEventListener("keydown", function (e) {
