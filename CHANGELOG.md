@@ -1,5 +1,16 @@
 # Release notes
 
+## v2026.10.22.4 — 22 October 2026
+
+> **Plain-English notes are not written yet.** The writer did not describe these changes.
+> Below is the raw change list, grouped by area. Replace this section before
+> showing it to a client.
+
+### General
+
+- Remove 16 unused original JPG photos (d556); history keeps them (#31)
+
+
 ## v2026.10.22.2 — 22 October 2026
 
 A tap outside the mobile menu closes it.
