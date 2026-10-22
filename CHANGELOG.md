@@ -1,5 +1,10 @@
 # Release notes
 
+## v2026.10.22.2 — 22 October 2026
+
+A tap outside the mobile menu closes it.
+
+
 ## v2026.10.21.3 — 21 October 2026
 
 When you share the Soul Trip website, its preview shows a Kaaba image on social platforms that display link cards.
