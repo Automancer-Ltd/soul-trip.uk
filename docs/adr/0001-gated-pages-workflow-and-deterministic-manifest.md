@@ -17,8 +17,8 @@
    GitHub Pages is set to `build_type == "workflow"`. Within [`.github/workflows/check.yml`](../../.github/workflows/check.yml), the `deploy` job `needs:` the `verify` job, which runs `scripts/check` and uploads the Pages artifact, and `deploy` ends with `verify-production`, so a failing check physically prevents publication.
 2. **Deterministic SHA-256 Manifest (`site-manifest.json`):**
    [`scripts/generate-manifest.mjs`](../../scripts/generate-manifest.mjs) hashes every git-tracked file where `isServedPath(relPath)` is true (no path segment starts with `.` or `_`) except `FINGERPRINT_EXCLUDED_FILES` (`CHANGELOG.md`, `VISION.md`). Post-deploy, [`scripts/verify-production.mjs`](../../scripts/verify-production.mjs) fetches `https://soul-trip.uk/site-manifest.json` and verifies every served file's SHA-256 against the local tree.
-3. **Hostile Negative-Control Suite (`scripts/test-negative-controls.mjs`) and Strict Meta Verifier (`scripts/verify_repo_meta.py`):**
-   Every check in `check-site.mjs`, `check-manifest.mjs`, `check-sentry-integration.mjs`, and `verify-production.mjs` is paired with sabotage fixtures in [`scripts/test-negative-controls.mjs`](../../scripts/test-negative-controls.mjs), and repository metadata (`deploy.json`, `.release-notes.json`, `.gitleaks.toml`, `site-manifest.json`) is verified by [`scripts/verify_repo_meta.py`](../../scripts/verify_repo_meta.py) via [`scripts/check`](../../scripts/check).
+3. **Hostile Negative-Control Suite (`scripts/test-negative-controls.mjs`) and Config Check (`scripts/check-meta.mjs`):**
+   Every check in `check-site.mjs`, `check-manifest.mjs`, `check-sentry-integration.mjs`, and `verify-production.mjs` is paired with sabotage fixtures in [`scripts/test-negative-controls.mjs`](../../scripts/test-negative-controls.mjs), and `deploy.json` and `.release-notes.json` are verified by [`scripts/check-meta.mjs`](../../scripts/check-meta.mjs) via [`scripts/check`](../../scripts/check). The `.gitleaks.toml` guard is a workflow step.
 
 ## Consequences
 

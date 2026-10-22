@@ -85,16 +85,8 @@ jobs:
         with:
           node-version: 24
 
-      - uses: actions/setup-python@v7
-        with:
-          python-version: "3.14"
-
-      - name: Install typecheck and lint runner
-        timeout-minutes: 3
-        run: python3 -m pip install mypy==2.4.0
-
-      # mypy, repo-meta verifier and unit tests, manifest, site contract, Sentry
-      # SRI and privacy, production-verifier self-proof, negative controls.
+      # Config check, manifest, site contract, Sentry SRI and privacy,
+      # production-verifier self-proof, negative controls.
       - name: Check
         run: ./scripts/check
 

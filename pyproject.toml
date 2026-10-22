@@ -1,7 +1,0 @@
-[tool.mypy]
-python_version = "3.11"
-strict = true
-files = [
-  "scripts/verify_repo_meta.py",
-  "tests/test_verify_repo_meta.py",
-]

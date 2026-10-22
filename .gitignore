@@ -19,8 +19,6 @@ formspree.json
 # Build / tool caches
 node_modules/
 dist/
-__pycache__/
-.mypy_cache/
 
 # Local-only overrides
 AGENTS.local.md

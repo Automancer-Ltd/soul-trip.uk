@@ -10,7 +10,7 @@
 ## Commands
 
 ```bash
-checkq -- ./scripts/check        # everything CI runs, about 20 s: mypy, repo meta, manifest, site contract C1-C8, Sentry SRI and privacy, verifier self-proof, negative controls
+checkq -- ./scripts/check        # everything CI runs, about 15 s: config, manifest, site contract C1-C8, Sentry SRI and privacy, verifier self-proof, negative controls
 node scripts/generate-manifest.mjs   # after `git add` of any served-file change
 .agents/skills/verify-soul-trip-uk/scripts/drive-enquiry.sh   # real browser walk of the enquiry form on a local copy; Formspree is stubbed, nothing is sent
 node scripts/verify-production.mjs --base https://soul-trip.uk/   # live site serves exactly this tree
