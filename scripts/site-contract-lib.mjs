@@ -8,8 +8,14 @@ export function repoRoot() {
   return path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 }
 
+// Engineering files that live in the repo but are not part of the public site.
+const NOT_SITE = [/^scripts\//, /^docs\//, /^(AGENTS|SPEC|GLOSSARY)\.md$/];
+
 export function isServedPath(relPath) {
-  return !relPath.split("/").some((segment) => segment.startsWith(".") || segment.startsWith("_"));
+  return (
+    !relPath.split("/").some((segment) => segment.startsWith(".") || segment.startsWith("_")) &&
+    !NOT_SITE.some((re) => re.test(relPath))
+  );
 }
 
 // Files excluded from the deploy fingerprint by exact name. CHANGELOG.md is the

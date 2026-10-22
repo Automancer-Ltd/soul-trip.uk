@@ -5,7 +5,7 @@
 ## Hard Public-Site Boundary
 
 - `soul-trip.uk` is a live public client site (`https://soul-trip.uk/`). **Never make visible wording, design, palette, or imagery changes** to `index.html`, `assets/css/styles.css`, `assets/js/main.js`, or `images/**` unless explicitly instructed by Waseem.
-- Whenever any served tracked file (any path where no segment starts with `.` or `_`, other than `CHANGELOG.md` and `VISION.md`) is added, edited, or removed, stage the change (`git add`) and run `node scripts/generate-manifest.mjs` to update [`site-manifest.json`](site-manifest.json).
+- Whenever any served tracked file (not under `scripts/` or `docs/`, not `AGENTS.md`/`SPEC.md`/`GLOSSARY.md`, no segment starting with `.` or `_`, other than `CHANGELOG.md` and `VISION.md`; `isServedPath` is the rule) is added, edited, or removed, stage the change (`git add`) and run `node scripts/generate-manifest.mjs` to update [`site-manifest.json`](site-manifest.json).
 
 ## Commands
 
