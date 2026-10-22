@@ -4,11 +4,11 @@
 
 [`VISION.md`](VISION.md) is the authority-0 document for `soul-trip.uk`. The site is a static, zero-build-step marketing and enquiry site (`index.html`, `assets/css/styles.css`, `assets/js/main.js`, `assets/js/sentry-init.js`) served on GitHub Pages at `https://soul-trip.uk/`.
 
-**Hard Boundary:** Never modify visible public wording, imagery, typography, or layout without explicit client/owner instruction. Every automated change to the repository is gated by the static and behavioural contracts below before GitHub Actions publishes the artifact to GitHub Pages.
+**Hard Boundary:** Never modify visible public wording, imagery, typography, or layout without explicit client/owner instruction. Every automated change to the repository is gated by the static and behavioural contracts below before GitHub Actions publishes the artifact (`scripts/stage-site.mjs` stages the served tree only) to GitHub Pages.
 
 ## 2. Deterministic Served-Tree Fingerprint (`site-manifest.json`)
 
-- [`scripts/site-contract-lib.mjs`](scripts/site-contract-lib.mjs) defines `isServedPath(relPath)` (any git-tracked path where no segment starts with `.` or `_`) and `FINGERPRINT_EXCLUDED_FILES = ["CHANGELOG.md", "VISION.md"]`.
+- [`scripts/site-contract-lib.mjs`](scripts/site-contract-lib.mjs) defines `isServedPath(relPath)` (any git-tracked path where no segment starts with `.` or `_`, except the repo-only `scripts/`, `docs/`, `AGENTS.md`, `SPEC.md`, `GLOSSARY.md`) and `FINGERPRINT_EXCLUDED_FILES = ["CHANGELOG.md", "VISION.md"]`.
 - [`scripts/generate-manifest.mjs`](scripts/generate-manifest.mjs) computes the SHA-256 of every non-excluded served path in canonical sorted order and writes [`site-manifest.json`](site-manifest.json).
 - [`scripts/check-manifest.mjs`](scripts/check-manifest.mjs) verifies in read-only mode that `site-manifest.json` matches the working tree byte-for-byte and that no untracked non-ignored served files make the tree ambiguous.
 

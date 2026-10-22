@@ -91,14 +91,16 @@ jobs:
         run: ./scripts/check
 
       # Publish. Only from `main`, only on a push, and only after the check above.
-      # The site is hand-written and served from the repository root, which is
-      # exactly what the legacy branch build published. Uploading the root keeps
-      # the public surface byte-identical to what is live today; narrowing it
-      # would be a change to the site, smuggled in as a change to CI.
+      # The site is hand-written. Publish exactly the served tree (what the
+      # manifest fingerprints), not the whole checkout: scripts/, docs/ and the
+      # agent docs are repo-only (`isServedPath` in scripts/site-contract-lib.mjs).
+      - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: node scripts/stage-site.mjs
+
       - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v5
         with:
-          path: .
+          path: _site
 
   deploy:
     needs: verify
