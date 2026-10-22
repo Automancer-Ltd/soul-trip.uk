@@ -18,9 +18,12 @@ name: site-contract
 # ungated behaviour above. (Pages source re-checked: gh api
 # repos/Automancer-Ltd/soul-trip.uk/pages --jq .build_type == "workflow".)
 #
-# Last verified: 2026-10-16 on automancer-vps (scripts: ./scripts/check,
-# node scripts/check-manifest.mjs, node scripts/check-site.mjs,
-# node scripts/verify-production.mjs --prove-verification)
+# Two jobs. `verify` is the whole check (`scripts/check`, the same command an
+# agent runs locally) and, on a push to main, uploads the Pages artifact.
+# `deploy` publishes it and then proves production serves this exact tree.
+# Fewer jobs because every job bills a whole minute and starts its own runner.
+#
+# Last verified: 2026-10-22 on automancer-vps (./scripts/check)
 
 on:
   push:
@@ -52,7 +55,7 @@ jobs:
         with:
           exclude-paths: "scripts/test-negative-controls.mjs"
 
-      # Secret scan inside the gate: `build` uploads the whole checkout to the
+      # Secret scan inside the gate: `verify` uploads the whole checkout to the
       # public site, so a committed credential must stop the deploy here.
       # Same steps as premier-mist-site-reporting's secret-scan.yml.
       - name: Install gitleaks
@@ -90,53 +93,28 @@ jobs:
         timeout-minutes: 3
         run: python3 -m pip install mypy==2.4.0
 
-      - name: Run typecheck, lint, and meta unit tests
-        run: |
-          PYTHONDONTWRITEBYTECODE=1 python3 -m mypy --cache-dir /tmp/mypy-cache-soultrip --config-file pyproject.toml
-          PYTHONDONTWRITEBYTECODE=1 python3 -B scripts/verify_repo_meta.py
-          PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest discover -s tests -v
+      # mypy, repo-meta verifier and unit tests, manifest, site contract, Sentry
+      # SRI and privacy, production-verifier self-proof, negative controls.
+      - name: Check
+        run: ./scripts/check
 
-      - name: Published-artifact manifest is fresh and canonical (read-only check)
-        run: node scripts/check-manifest.mjs
-
-      - name: Site contract — references, anchors, alts, form wiring, Sentry, WCAG AA tokens, favicon/robots/sitemap refs, structural a11y regressions
-        run: node scripts/check-site.mjs
-
-      - name: Sentry integration — pinned SDK + recomputed SRI vs served bytes + active DSN shape + privacy controls
-        run: node scripts/check-sentry-integration.mjs --expect-active
-
-      - name: Production verifier discriminates previous builds (built-in negative control)
-        run: node scripts/verify-production.mjs --prove-verification
-
-      - name: Negative-control suite — every checker proven able to fail; purity proofs for read-only commands
-        run: node scripts/test-negative-controls.mjs
-
-  # ---------------------------------------------------------------------------
-  # Publish. Only from `main`, only on a push, and only after `verify` is green.
-  # ---------------------------------------------------------------------------
-  build:
-    needs: verify
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    runs-on: ${{ fromJSON(vars.CI_RUNNER || '"ubuntu-24.04"') }}
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          persist-credentials: false
-
+      # Publish. Only from `main`, only on a push, and only after the check above.
       # The site is hand-written and served from the repository root, which is
       # exactly what the legacy branch build published. Uploading the root keeps
       # the public surface byte-identical to what is live today; narrowing it
       # would be a change to the site, smuggled in as a change to CI.
-      - uses: actions/upload-pages-artifact@v5
+      - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v5
         with:
           path: .
 
   deploy:
-    needs: build
+    needs: verify
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ${{ fromJSON(vars.CI_RUNNER || '"ubuntu-24.04"') }}
     timeout-minutes: 10
     permissions:
+      contents: read
       pages: write
       id-token: write
     environment:
@@ -150,11 +128,6 @@ jobs:
       - id: deployment
         uses: actions/deploy-pages@v5
 
-  verify-production:
-    needs: deploy
-    runs-on: ${{ fromJSON(vars.CI_RUNNER || '"ubuntu-24.04"') }}
-    timeout-minutes: 10
-    steps:
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
@@ -163,10 +136,7 @@ jobs:
         with:
           node-version: 24
 
-      # The repo has always had this verifier. Until now CI only ever ran it
-      # against three hostile fixtures (--prove-verification, in `verify`
-      # above); it had never once been pointed at soul-trip.uk. It fetches the
-      # live manifest, requires it byte-identical to this tree's, then hashes
-      # every one of the served files against it.
+      # Fetches the live manifest, requires it byte-identical to this tree's,
+      # then hashes every one of the served files against it.
       - name: Production serves this exact tree
         run: node scripts/verify-production.mjs --base https://soul-trip.uk/ --verbose
