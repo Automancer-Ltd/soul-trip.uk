@@ -1,34 +1,40 @@
 ---
 name: verify-soul-trip-uk
-description: End-to-end functional verification skill and feature map for soul-trip.uk (site-manifest determinism, C1-C8 static contract, Sentry SRI/privacy contract, production verifier self-proof, and repo metadata).
+description: Drive and verify the real soul-trip.uk site: the enquiry form in a browser on a local copy, and the live site against the repo. Use to prove a change to the page works before or after release.
 ---
 
 # Verify `soul-trip.uk`
 
-Runs the functional verification harness for `soul-trip.uk` (`verify_repo_meta.py`, `check-manifest.mjs`, `check-site.mjs`, `check-sentry-integration.mjs --expect-active`, `verify-production.mjs --prove-verification`, and isolated fault-injection checks) and writes a structured evidence artifact to `.audit/verify-soul-trip-uk/latest.json`.
+Static site, no build: the repo root is what visitors get. Two surfaces, one journey each (see [`features/INDEX.md`](features/INDEX.md)).
 
-## Feature Map
-
-- [`features/INDEX.md`](features/INDEX.md) — Feature index and verification status
-- [`features/site-contract-and-a11y.md`](features/site-contract-and-a11y.md) — Eight static site-contract invariants (`C1`–`C8`: internal refs/anchors, alts, Formspree form + honeypot parity, Sentry loader, WCAG AA contrast, favicon/robots/sitemap, footer `<h3>`/WhatsApp landmark a11y, `#privacy` links)
-- [`features/manifest-and-production-verifier.md`](features/manifest-and-production-verifier.md) — Canonical `site-manifest.json` determinism, `FINGERPRINT_EXCLUDED_FILES` isolation, `deploy.json`, and `verify-production.mjs` self-proof
-- [`features/sentry-sri-and-privacy.md`](features/sentry-sri-and-privacy.md) — Pinned Sentry SDK URL, `sha384` subresource-integrity verification, and PII scrubbing (`sendDefaultPii: false`, `beforeSend`)
-
-## How to Run
+## Launch and drive
 
 ```bash
-checkq -- python3 .agents/skills/verify-soul-trip-uk/scripts/verify_soul_trip_uk.py
+.agents/skills/verify-soul-trip-uk/scripts/drive-enquiry.sh [evidence-dir]
 ```
 
-Also run the unified repository check entrypoint:
+Serves the repo root on a random `127.0.0.1` port, opens it with `agent-browser`, fills and submits the enquiry form with `fetch` stubbed (nothing is sent to Formspree), and requires the success panel and exactly one POST to the live enquiry form URL. Run it on auto-vps: auto-vault has no `agent-browser`.
+
+## Doctor
+
+`checkq -- ./scripts/check` (about 20 s) is the read-only "is this tree sound" check, the same command CI runs. Run it first when anything looks off.
+
+## Evidence
+
+`enquiry-success.png` (success panel) and `enquiry-requests.txt` (the POST target) land in the evidence dir, default `$TMPDIR/soul-trip-evidence`. They survive cleanup.
+
+## Live site
 
 ```bash
-checkq -- ./scripts/check
+node scripts/verify-production.mjs --base https://soul-trip.uk/ --verbose
 ```
 
-## Red Proof Protocol
+Requires the live manifest to equal this tree's and hashes every served file. CI's `deploy` job runs it after publishing, so a green run on `main` already proves production serves that commit.
 
-1. Introduce a surgical fault in `deploy.json` (for example change `"kind": "auto"` to `"kind": "none"`) or in `scripts/verify_repo_meta.py`.
-2. Run `checkq -- python3 .agents/skills/verify-soul-trip-uk/scripts/verify_soul_trip_uk.py` and confirm it exits non-zero (`RED_RC != 0`).
-3. Revert the fault (`git checkout -- deploy.json`).
-4. Re-run `checkq -- python3 .agents/skills/verify-soul-trip-uk/scripts/verify_soul_trip_uk.py` and confirm it exits `0` (`GREEN_RC=0`).
+## Cleanup
+
+The script's `trap` closes its `agent-browser` session and stops its server on every exit path, including failure.
+
+## Red proof (22 Oct 2026)
+
+Copy the tree to scratch and break the copy, then run the copy's script: mispointing the form `action` (`/f/enquiry` to `/f/enquirx`) fails on the POST target; changing `if (response.ok)` to `if (false)` in `assets/js/main.js` fails on the missing success panel. The unbroken tree passes.

@@ -74,7 +74,7 @@ the lane is down. Run it in the lane's clone, never in a developer clone.
    gh run list --repo Automancer-Ltd/soul-trip.uk --workflow site-contract \
      --branch main --event push --commit "$SHA" \
      --json conclusion,headSha,url
-   # conclusion must be "success": verify, build, deploy and verify-production passed
+   # conclusion must be "success": verify and deploy (which ends with verify-production) passed
    git worktree add --detach "$TMP/st-verify" "$SHA"
    node "$TMP/st-verify/scripts/verify-production.mjs" --base https://soul-trip.uk/ --verbose
    git worktree remove "$TMP/st-verify"

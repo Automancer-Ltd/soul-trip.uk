@@ -33,5 +33,5 @@
 
 ## 5. Production Verifier & Gated Deploy (`.github/workflows/check.yml`)
 
-- [`.github/workflows/check.yml`](.github/workflows/check.yml) runs `verify` before `build` -> `deploy` -> `verify-production`.
+- [`.github/workflows/check.yml`](.github/workflows/check.yml) runs `verify` (which runs `scripts/check` and uploads the Pages artifact on a push to `main`), then `deploy` (which ends with `verify-production`).
 - [`scripts/verify-production.mjs`](scripts/verify-production.mjs) supports `--prove-verification` (built-in negative controls against three hostile fixtures) and `--base https://soul-trip.uk/` (fetches live `site-manifest.json` and verifies every served file's SHA-256 in production).

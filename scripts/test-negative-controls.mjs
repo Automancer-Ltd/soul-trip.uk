@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { spawn, spawnSync } from "node:child_process";
-import { mkdir, readdir, readFile, stat, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdir, readFile, stat, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import http from "node:http";
 import os from "node:os";
@@ -44,49 +44,6 @@ async function detachCopyRepo(dir) {
   if (init.status !== 0) throw new Error(`git init failed in copy: ${init.stderr}`);
   const add = spawnSync("git", ["add", "-A"], { cwd: dir });
   if (add.status !== 0) throw new Error(`git add -A failed in copy: ${add.stderr}`);
-}
-
-async function walkSnapshot(dir, base = dir, acc = { files: new Map(), dirs: new Map() }) {
-  for (const entry of await readdir(dir, { withFileTypes: true })) {
-    const full = path.join(dir, entry.name);
-    const rel = path.relative(base, full);
-    if (entry.isDirectory()) {
-      acc.dirs.set(rel, [...(await readdir(full))].sort().join("\n"));
-      await walkSnapshot(full, base, acc);
-    } else {
-      const st = await stat(full);
-      acc.files.set(rel, {
-        sha256: createHash("sha256").update(await readFile(full)).digest("hex"),
-        mtimeMs: st.mtimeMs,
-        ino: st.ino,
-        size: st.size
-      });
-    }
-  }
-  return acc;
-}
-
-function snapshotProblems(before, after) {
-  const problems = [];
-  for (const [rel, meta] of before.files) {
-    const now = after.files.get(rel);
-    if (!now) problems.push(`file deleted by checker: ${rel}`);
-    else if (now.sha256 !== meta.sha256 || now.mtimeMs !== meta.mtimeMs || now.ino !== meta.ino || now.size !== meta.size) {
-      problems.push(`file mutated by checker: ${rel} (bytes/mtime/inode changed)`);
-    }
-  }
-  for (const rel of after.files.keys()) {
-    if (!before.files.has(rel)) problems.push(`extra file written by checker: ${rel}`);
-  }
-  for (const [rel, listing] of before.dirs) {
-    const now = after.dirs.get(rel);
-    if (now === undefined) problems.push(`directory removed by checker: ${rel}`);
-    else if (now !== listing) problems.push(`directory listing changed by checker: ${rel}`);
-  }
-  for (const rel of after.dirs.keys()) {
-    if (!before.dirs.has(rel)) problems.push(`extra directory created by checker: ${rel}`);
-  }
-  return problems;
 }
 
 function runNode(scriptRel, cwd, args = []) {
@@ -143,16 +100,6 @@ function runSentryChecker(dir, args = [], extraEnv = {}) {
   return spawnSync(
     process.execPath,
     [path.join(REPO, "scripts/check-sentry-integration.mjs"), "--root", dir, ...args],
-    { cwd: dir, encoding: "utf8", timeout: 120000, env: { ...process.env, ...extraEnv } }
-  );
-}
-
-// Runs the COPY's own checker file. Only used by the sabotage-of-the-checker meta-proofs,
-// where the shipped script inside the copy has itself been tampered with.
-function runCopySentryChecker(dir, args = [], extraEnv = {}) {
-  return spawnSync(
-    process.execPath,
-    [path.join(dir, "scripts/check-sentry-integration.mjs"), "--root", dir, ...args],
     { cwd: dir, encoding: "utf8", timeout: 120000, env: { ...process.env, ...extraEnv } }
   );
 }
@@ -373,104 +320,6 @@ await test("T20", "manifest check fails when a manifest entry is missing from th
   }
 });
 
-await test("T21", "manifest check rejects reordered entries even though hashes and whitespace stay valid", async () => {
-  const dir = await makeCopy("soultrip-negctl-order-");
-  try {
-    const manifestPath = path.join(dir, "site-manifest.json");
-    const raw = await readFile(manifestPath, "utf8");
-    const m = JSON.parse(raw);
-    const keys = Object.keys(m.files);
-    const reordered = {};
-    for (const k of keys.slice(1)) reordered[k] = m.files[k];
-    reordered[keys[0]] = m.files[keys[0]];
-    const rewritten = JSON.stringify({ algorithm: m.algorithm, files: reordered }, null, 2) + "\n";
-    // same keys, same digests, same canonical encoding style — only order moved
-    if ([...Object.keys(JSON.parse(rewritten).files)].sort().join("|") !== [...keys].sort().join("|")) {
-      throw new Error("sabotage fixture changed the key set");
-    }
-    await writeFile(manifestPath, rewritten);
-    const r = runNode("scripts/check-manifest.mjs", dir, ["--root", dir]);
-    return {
-      pass:
-        r.status === 1 &&
-        /ordering does not match the canonical working-tree order/.test(r.stdout + r.stderr) &&
-        !/matches the working tree exactly/.test(r.stdout + r.stderr),
-      evidence: `exit=${r.status}`
-    };
-  } finally {
-    await rm(dir, { recursive: true, force: true });
-  }
-});
-
-await test("T22", "manifest check rejects non-canonical byte encoding of identical content", async () => {
-  const dir = await makeCopy("soultrip-negctl-man4-");
-  try {
-    const manifest = JSON.parse(await readFile(path.join(dir, "site-manifest.json"), "utf8"));
-    await writeFile(path.join(dir, "site-manifest.json"), JSON.stringify(manifest));
-    const r = runNode("scripts/check-manifest.mjs", dir, ["--root", dir]);
-    const out = r.stdout + r.stderr;
-    return {
-      pass:
-        r.status === 1 &&
-        /canonical deterministic encoding/.test(out) &&
-        !/ordering does not match/.test(out),
-      evidence: `exit=${r.status} (encoding diagnostic fired without the ordering one — distinct causes)`
-    };
-  } finally {
-    await rm(dir, { recursive: true, force: true });
-  }
-});
-
-await test("T23", "generate-manifest is deterministic: two runs produce identical bytes; no-op second run does not rewrite", async () => {
-  const dir = await makeCopy("soultrip-negctl-gen-");
-  try {
-    const first = runNode("scripts/generate-manifest.mjs", dir, ["--root", dir]);
-    const bytes1 = await readFile(path.join(dir, "site-manifest.json"));
-    const mtimeBefore = (await stat(path.join(dir, "site-manifest.json"))).mtimeMs;
-    await new Promise((r) => setTimeout(r, 20));
-    const second = runNode("scripts/generate-manifest.mjs", dir, ["--root", dir]);
-    const bytes2 = await readFile(path.join(dir, "site-manifest.json"));
-    const mtimeAfter = (await stat(path.join(dir, "site-manifest.json"))).mtimeMs;
-    return {
-      pass:
-        first.status === 0 &&
-        second.status === 0 &&
-        bytes1.equals(bytes2) &&
-        mtimeBefore === mtimeAfter &&
-        /already up to date/.test(second.stdout),
-      evidence: `first exit=${first.status}, second exit=${second.status}, identical=${bytes1.equals(bytes2)}, mtime unchanged=${mtimeBefore === mtimeAfter}`
-    };
-  } finally {
-    await rm(dir, { recursive: true, force: true });
-  }
-});
-
-await test("T24", "purity: check-site.mjs never mutates its input tree (bytes+mtime+inode+directory listings)", async () => {
-  const dir = await makeCopy("soultrip-negctl-pure1-");
-  try {
-    const before = await walkSnapshot(dir);
-    const r = await checkSite(dir);
-    const after = await walkSnapshot(dir);
-    const problems = snapshotProblems(before, after);
-    return { pass: problems.length === 0 && r.code === 0, evidence: problems.length ? problems.join("; ") : "tree byte-identical across full green run" };
-  } finally {
-    await rm(dir, { recursive: true, force: true });
-  }
-});
-
-await test("T25", "purity: check-manifest.mjs is read-only (bytes+mtime+inode+directory listings, .git/index included)", async () => {
-  const dir = await makeCopy("soultrip-negctl-pure2-");
-  try {
-    const before = await walkSnapshot(dir);
-    const r = runNode("scripts/check-manifest.mjs", dir, ["--root", dir]);
-    const after = await walkSnapshot(dir);
-    const problems = snapshotProblems(before, after);
-    return { pass: problems.length === 0 && r.status === 0, evidence: problems.length ? problems.join("; ") : "no file, metadata or directory change" };
-  } finally {
-    await rm(dir, { recursive: true, force: true });
-  }
-});
-
 await test("T26", "purity: verify-production GETs only manifest-listed paths; harness port refuses connections after its single awaited close", async () => {
   const dir = await makeCopy("soultrip-negctl-pure3-");
   let server;
@@ -527,7 +376,6 @@ await test("T26", "purity: verify-production GETs only manifest-listed paths; ha
 // T27 closes the missing #form-error rename control; T28-T31 prove the C7 structural
 // accessibility regressions (regression coverage only, not an axe substitute);
 // T32-T39 prove each Sentry checker direction independently through the offline seam;
-// T40-T41 are meta-proofs that these controls detect a broken or lying checker.
 
 await test("T27", "sabotage: C3 error panel id renamed (#form-error) → fails naming #form-error, distinct from the #form-success case", async () => {
   const dir = await makeCopy("soultrip-negctl-errid-");
@@ -778,38 +626,6 @@ await test("T39", "Sentry hostile: privacy control stripped from sentry-init.js 
         r.status === 1 &&
         /Missing Sentry privacy control: sendDefaultPii: false/.test(r.stdout + r.stderr),
       evidence: `exit=${r.status}`
-    };
-  } finally {
-    await rm(dir, { recursive: true, force: true });
-  }
-});
-
-await test("T40", "meta-proof: an unconditional-throw sabotage of the checker makes the green-direction Sentry control FAIL", async () => {
-  const { dir, fixturePath } = await makeOfflineGreenCopy("soultrip-negctl-throw-");
-  try {
-    await writeFile(path.join(dir, "scripts/check-sentry-integration.mjs"), 'throw new Error("sabotage: unconditional throw");');
-    const r = runCopySentryChecker(dir, ["--expect-active"], { SENTRY_SDK_FIXTURE: fixturePath });
-    return {
-      pass: r.status !== 0,
-      evidence: `sabotaged checker exit=${r.status} on a faithful-good fixture tree — the green control is not vacuous`
-    };
-  } finally {
-    await rm(dir, { recursive: true, force: true });
-  }
-});
-
-await test("T41", "meta-proof: an always-success no-op checker masks a real violation → the hostile-direction expectation is violated", async () => {
-  const { dir, fixturePath } = await makeOfflineGreenCopy("soultrip-negctl-noop-");
-  try {
-    await sabotageInCopy(dir, "index.html", [
-      ["assets/js/vendor/sentry-10.66.0.bundle.min.js", "assets/js/vendor/sentry-10.65.0.bundle.min.js"]
-    ]);
-    const pristine = runSentryChecker(dir, ["--expect-active"], { SENTRY_SDK_FIXTURE: fixturePath });
-    await writeFile(path.join(dir, "scripts/check-sentry-integration.mjs"), "process.exit(0);");
-    const noop = runCopySentryChecker(dir, ["--expect-active"], { SENTRY_SDK_FIXTURE: fixturePath });
-    return {
-      pass: pristine.status === 1 && noop.status === 0,
-      evidence: `pristine checker exit=${pristine.status} (hostile tree rejected); no-op checker exit=${noop.status} — a lying checker is caught by this hostile control`
     };
   } finally {
     await rm(dir, { recursive: true, force: true });

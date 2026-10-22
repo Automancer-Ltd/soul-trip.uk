@@ -14,7 +14,7 @@
 ## Decision
 
 1. **Single Gated Workflow (`.github/workflows/check.yml`):**
-   GitHub Pages is set to `build_type == "workflow"`. Within [`.github/workflows/check.yml`](../../.github/workflows/check.yml), the `build`, `deploy`, and `verify-production` jobs depend sequentially (`needs:`) on the `verify` job so a failing check physically prevents publication.
+   GitHub Pages is set to `build_type == "workflow"`. Within [`.github/workflows/check.yml`](../../.github/workflows/check.yml), the `deploy` job `needs:` the `verify` job, which runs `scripts/check` and uploads the Pages artifact, and `deploy` ends with `verify-production`, so a failing check physically prevents publication.
 2. **Deterministic SHA-256 Manifest (`site-manifest.json`):**
    [`scripts/generate-manifest.mjs`](../../scripts/generate-manifest.mjs) hashes every git-tracked file where `isServedPath(relPath)` is true (no path segment starts with `.` or `_`) except `FINGERPRINT_EXCLUDED_FILES` (`CHANGELOG.md`, `VISION.md`). Post-deploy, [`scripts/verify-production.mjs`](../../scripts/verify-production.mjs) fetches `https://soul-trip.uk/site-manifest.json` and verifies every served file's SHA-256 against the local tree.
 3. **Hostile Negative-Control Suite (`scripts/test-negative-controls.mjs`) and Strict Meta Verifier (`scripts/verify_repo_meta.py`):**
@@ -23,5 +23,5 @@
 ## Consequences
 
 - Any change to a served file (not starting with `.` or `_` and not in `FINGERPRINT_EXCLUDED_FILES`) requires staging (`git add`) and running `node scripts/generate-manifest.mjs` before committing.
-- Hidden directories (`.github/`, `.githooks/`, `.agents/`, `.audit/`) are automatically omitted from `isServedPath` and `site-manifest.json`.
+- Hidden directories (`.github/`, `.githooks/`, `.agents/`) are automatically omitted from `isServedPath` and `site-manifest.json`.
 - Guardian `served-vs-main` tracks live GitHub Pages deployments via [`deploy.json`](../../deploy.json) (`https://api.github.com/repos/Automancer-Ltd/soul-trip.uk/deployments?environment=github-pages&per_page=1`, `0.sha`).

@@ -19,5 +19,6 @@ node scripts/check-manifest.mjs
 node scripts/check-site.mjs
 node scripts/check-sentry-integration.mjs --expect-active
 node scripts/verify-production.mjs --prove-verification
+node scripts/test-negative-controls.mjs
 
 echo "lint + typecheck + test: PASS"
