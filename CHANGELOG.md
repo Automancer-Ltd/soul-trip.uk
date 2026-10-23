@@ -1,5 +1,16 @@
 # Release notes
 
+## v2026.10.23.1 — 23 October 2026
+
+> **Plain-English notes are not written yet.** The writer did not describe these changes.
+> Below is the raw change list, grouped by area. Replace this section before
+> showing it to a client.
+
+### Enquiry
+
+- guard fetch failure reporter and classify HTTP status (t6463) (#32)
+
+
 ## v2026.10.22.4 — 22 October 2026
 
 > **Plain-English notes are not written yet.** The writer did not describe these changes.
