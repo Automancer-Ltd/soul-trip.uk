@@ -5,6 +5,7 @@ import { createHash } from "node:crypto";
 import http from "node:http";
 import os from "node:os";
 import path from "node:path";
+import vm from "node:vm";
 import { repoRoot } from "./site-contract-lib.mjs";
 
 const REPO = repoRoot();
@@ -954,7 +955,7 @@ await test("T52", "sabotage: Sentry failure reporting stripped from main.js → 
   const dir = await makeCopy("soultrip-negctl-sentryrep-");
   try {
     await sabotageInCopy(dir, "assets/js/main.js", [
-      ['          if (window.Sentry && typeof window.Sentry.captureException === "function") {\n            var report = new Error("Enquiry submission failed");\n            report.name = err && err.name ? "EnquirySubmit" + err.name : "EnquirySubmitError";\n            window.Sentry.captureException(report);\n          }\n', ""]
+      ['          try {\n            if (window.Sentry && typeof window.Sentry.captureException === "function") {\n              var errName = err && typeof err.name === "string" && /^[A-Za-z0-9_]{1,40}$/.test(err.name) ? err.name : "Error";\n              var report = new Error("Enquiry submission failed");\n              report.name = "EnquirySubmit" + errName;\n              window.Sentry.captureException(report);\n            }\n          } catch (_) { /* Never let telemetry hide the visitor-facing error state. */ }\n', ""]
     ]);
     const r = await checkSite(dir);
     return {
@@ -1028,6 +1029,114 @@ await test("T56", "sabotage: privacy section stops naming the form service → C
   } finally {
     await rm(dir, { recursive: true, force: true });
   }
+});
+
+await test("T58", "behaviour: failed enquiry fetch reports safe error classes without form data and recovers UI even if Sentry throws", async () => {
+  const mainJsSrc = await readFile(path.join(REPO, "assets/js/main.js"), "utf8");
+  function makeClassList() {
+    const set = new Set();
+    return {
+      add: (c) => set.add(c),
+      remove: (c) => set.delete(c),
+      toggle: (c, force) => (force === undefined ? (set.has(c) ? set.delete(c) : set.add(c)) : force ? set.add(c) : set.delete(c)),
+      contains: (c) => set.has(c)
+    };
+  }
+  function makeEl(id, extra = {}) {
+    const listeners = {};
+    return {
+      id,
+      style: {},
+      value: "",
+      textContent: "",
+      disabled: false,
+      options: [],
+      classList: makeClassList(),
+      setAttribute() {},
+      getAttribute() { return ""; },
+      hasAttribute() { return true; },
+      focus() {},
+      getBoundingClientRect: () => ({ top: 0, bottom: 0 }),
+      addEventListener(type, fn) { listeners[type] = fn; },
+      querySelector: () => ({ value: "" }),
+      checkValidity: () => true,
+      reportValidity() {},
+      _listeners: listeners,
+      ...extra
+    };
+  }
+
+  async function runSubmitCase(fetchImpl, sentryImpl) {
+    const elements = {
+      nav: makeEl("nav"),
+      "nav-toggle": makeEl("nav-toggle"),
+      "nav-links": makeEl("nav-links"),
+      type: makeEl("type", { value: "Umrah" }),
+      "enquiry-guidance": makeEl("enquiry-guidance"),
+      enquiry: makeEl("enquiry"),
+      "enquiry-form": makeEl("enquiry-form", { action: "https://formspree.io/p/3011773691026472174/f/enquiry" }),
+      "form-success": makeEl("form-success"),
+      "form-error": makeEl("form-error"),
+      "submit-btn": makeEl("submit-btn", { textContent: "Send Enquiry" })
+    };
+    const doc = {
+      documentElement: { scrollTop: 0, clientHeight: 800, classList: makeClassList() },
+      body: { scrollTop: 0 },
+      getElementById: (id) => elements[id] || null,
+      querySelectorAll: () => [],
+      addEventListener() {}
+    };
+    const win = {
+      document: doc,
+      location: { hash: "" },
+      pageYOffset: 0,
+      innerHeight: 800,
+      matchMedia: () => ({ matches: true }),
+      getComputedStyle: () => ({ getPropertyValue: () => "80" }),
+      scrollTo() {},
+      addEventListener() {},
+      FormData: function () { this.secret = "visitor@example.com"; },
+      AbortSignal: { timeout: () => ({}) },
+      setTimeout,
+      clearTimeout,
+      fetch: fetchImpl,
+      Sentry: sentryImpl
+    };
+    win.window = win;
+    vm.runInNewContext(mainJsSrc, win);
+    elements["enquiry-form"]._listeners.submit({ preventDefault() {} });
+    await new Promise((r) => setImmediate(r));
+    await new Promise((r) => setImmediate(r));
+    return { errorVisible: elements["form-error"].classList.contains("is-visible"), btnDisabled: elements["submit-btn"].disabled, btnText: elements["submit-btn"].textContent };
+  }
+
+  const captured = [];
+  const sentryRecorder = { captureException: (e) => captured.push({ name: e.name, message: e.message }) };
+
+  const netCase = await runSubmitCase(() => Promise.reject(new TypeError("Failed to fetch visitor@example.com")), sentryRecorder);
+  const httpCase = await runSubmitCase(() => Promise.resolve({ ok: false, status: 503 }), sentryRecorder);
+  const unsafeCase = await runSubmitCase(() => Promise.reject({ name: "Leak visitor@example.com" }), sentryRecorder);
+  const throwCase = await runSubmitCase(
+    () => Promise.reject(new TypeError("Failed to fetch")),
+    { captureException: () => { throw new TypeError("Sentry transport broken"); } }
+  );
+
+  const names = captured.map((c) => c.name);
+  const noPii = captured.every((c) => !c.name.includes("visitor") && c.message === "Enquiry submission failed");
+  const allRecovered = [netCase, httpCase, unsafeCase, throwCase].every(
+    (c) => c.errorVisible && !c.btnDisabled && c.btnText === "Send Enquiry"
+  );
+  const pass =
+    names.length === 3 &&
+    names[0] === "EnquirySubmitTypeError" &&
+    names[1] === "EnquirySubmitHttp503" &&
+    names[2] === "EnquirySubmitError" &&
+    noPii &&
+    allRecovered;
+  return {
+    pass,
+    evidence: `names=${JSON.stringify(names)}, noPii=${noPii}, recovered=${allRecovered}`
+  };
 });
 
 console.log("\nnegative-control suite results:");
