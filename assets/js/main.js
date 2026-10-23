@@ -249,18 +249,24 @@
           if (response.ok) {
             showEnquirySuccess();
           } else {
-            throw new Error("Bad response");
+            var httpErr = new Error("Bad response");
+            var status = response && typeof response.status === "number" ? response.status : 0;
+            httpErr.name = status >= 100 && status <= 599 ? "Http" + status : "HttpError";
+            throw httpErr;
           }
         })
         .catch(function (err) {
           clearSubmitTimer();
           // Report the failure without any visitor data so lost enquiries are
           // visible; the Sentry guard redacts the event before it leaves.
-          if (window.Sentry && typeof window.Sentry.captureException === "function") {
-            var report = new Error("Enquiry submission failed");
-            report.name = err && err.name ? "EnquirySubmit" + err.name : "EnquirySubmitError";
-            window.Sentry.captureException(report);
-          }
+          try {
+            if (window.Sentry && typeof window.Sentry.captureException === "function") {
+              var errName = err && typeof err.name === "string" && /^[A-Za-z0-9_]{1,40}$/.test(err.name) ? err.name : "Error";
+              var report = new Error("Enquiry submission failed");
+              report.name = "EnquirySubmit" + errName;
+              window.Sentry.captureException(report);
+            }
+          } catch (_) { /* Never let telemetry hide the visitor-facing error state. */ }
           errorBox.classList.add("is-visible");
           submitBtn.disabled = false;
           submitBtn.textContent = originalText;
