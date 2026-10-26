@@ -2,24 +2,12 @@
 
 ## v2026.10.23.1 — 23 October 2026
 
-> **Plain-English notes are not written yet.** The writer did not describe these changes.
-> Below is the raw change list, grouped by area. Replace this section before
-> showing it to a client.
-
-### Enquiry
-
-- guard fetch failure reporter and classify HTTP status (t6463) (#32)
+If an enquiry cannot be sent, the form now always shows its error message and lets the visitor try again. Failed enquiries are also recorded with the kind of failure, without any of the visitor's details, so lost enquiries can be traced.
 
 
 ## v2026.10.22.4 — 22 October 2026
 
-> **Plain-English notes are not written yet.** The writer did not describe these changes.
-> Below is the raw change list, grouped by area. Replace this section before
-> showing it to a client.
-
-### General
-
-- Remove 16 unused original JPG photos (d556); history keeps them (#31)
+The website no longer carries 16 original photos it did not use. Nothing visitors see has changed.
 
 
 ## v2026.10.22.2 — 22 October 2026
