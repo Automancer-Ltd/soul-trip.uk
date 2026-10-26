@@ -2,13 +2,7 @@
 
 ## v2026.10.26.1 — 26 October 2026
 
-> **Plain-English notes are not written yet.** The writer did not describe these changes.
-> Below is the raw change list, grouped by area. Replace this section before
-> showing it to a client.
-
-### General
-
-- Write plain-English release notes for v2026.10.22.4 and v2026.10.23.1 (t2871)
+The notes for the 22 and 23 October updates now describe those changes in plain English. Nothing on the website has changed.
 
 
 ## v2026.10.23.1 — 23 October 2026
