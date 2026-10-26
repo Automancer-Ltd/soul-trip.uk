@@ -1,5 +1,16 @@
 # Release notes
 
+## v2026.10.26.1 — 26 October 2026
+
+> **Plain-English notes are not written yet.** The writer did not describe these changes.
+> Below is the raw change list, grouped by area. Replace this section before
+> showing it to a client.
+
+### General
+
+- Write plain-English release notes for v2026.10.22.4 and v2026.10.23.1 (t2871)
+
+
 ## v2026.10.23.1 — 23 October 2026
 
 If an enquiry cannot be sent, the form now always shows its error message and lets the visitor try again. Failed enquiries are also recorded with the kind of failure, without any of the visitor's details, so lost enquiries can be traced.
