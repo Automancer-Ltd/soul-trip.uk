@@ -1,5 +1,10 @@
 # Release notes
 
+## v2026.10.26.1 — 26 October 2026
+
+The notes for the 22 and 23 October updates now describe those changes in plain English. Nothing on the website has changed.
+
+
 ## v2026.10.23.1 — 23 October 2026
 
 If an enquiry cannot be sent, the form now always shows its error message and lets the visitor try again. Failed enquiries are also recorded with the kind of failure, without any of the visitor's details, so lost enquiries can be traced.
