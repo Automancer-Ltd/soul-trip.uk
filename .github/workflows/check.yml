@@ -90,6 +90,24 @@ jobs:
       - name: Check
         run: ./scripts/check
 
+      # User-harm journey in a real browser against the staged tree: enquiry success,
+      # failure keeps the visitor's details, honeypot/empty sends nothing. Synthetic and
+      # read-only; all outside requests are blocked. Screenshots are uploaded as evidence.
+      - name: Journey and screenshots
+        timeout-minutes: 5
+        run: |
+          set -euo pipefail
+          npm install --no-save --no-audit --no-fund --prefix "$RUNNER_TEMP/pw" playwright-core@1.64.1
+          PLAYWRIGHT_CORE_DIR="$RUNNER_TEMP/pw" node scripts/journey.mjs --out "$RUNNER_TEMP/journey"
+
+      - if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: journey-screenshots
+          path: ${{ runner.temp }}/journey
+          if-no-files-found: ignore
+          retention-days: 14
+
       # Publish. Only from `main`, only on a push, and only after the check above.
       # The site is hand-written. Publish exactly the served tree (what the
       # manifest fingerprints), not the whole checkout: scripts/, docs/ and the
