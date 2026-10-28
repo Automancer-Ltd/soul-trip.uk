@@ -108,7 +108,7 @@ try {
     check("success: exactly one POST to the enquiry form", posts.length === 1, `${posts.length} posts`);
     check("success: details were sent", /Test\+Visitor|Test%20Visitor|Test Visitor/.test(posts[0]?.body || "") && /07000000000/.test(posts[0]?.body || ""));
     check("success: error box stays hidden", !(await visible(page, "#form-error.is-visible")));
-    await page.screenshot({ path: join(OUT, "enquiry-success.png") });
+    await page.locator("#form-success").screenshot({ path: join(OUT, "enquiry-success.png") });
     await ctx.close();
   }
 
