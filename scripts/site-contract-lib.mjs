@@ -9,7 +9,7 @@ export function repoRoot() {
 }
 
 // Engineering files that live in the repo but are not part of the public site.
-const NOT_SITE = [/^scripts\//, /^docs\//, /^(AGENTS|SPEC|GLOSSARY)\.md$/];
+const NOT_SITE = [/^scripts\//, /^docs\//, /^(AGENTS|README|SPEC|GLOSSARY)\.md$/];
 
 export function isServedPath(relPath) {
   return (
