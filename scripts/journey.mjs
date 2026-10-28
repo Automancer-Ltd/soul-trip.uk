@@ -50,7 +50,7 @@ const browser = await chromium.launch({
 
 // mode: "ok" | "fail" | "abort"
 async function newPage(viewport, mode) {
-  const ctx = await browser.newContext({ viewport, serviceWorkers: "block" });
+  const ctx = await browser.newContext({ viewport, serviceWorkers: "block", reducedMotion: "reduce" });
   ctx.setDefaultTimeout(STEP_MS);
   const page = await ctx.newPage();
   const posts = [], problems = [];
