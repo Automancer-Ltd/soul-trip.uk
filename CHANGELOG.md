@@ -1,5 +1,10 @@
 # Release notes
 
+## v2026.10.28.2 — 28 October 2026
+
+### Behind the scenes
+
+- Internal plumbing maintenance; no user-facing behaviour changed. <!-- commits: 3 -->
 ## v2026.10.26.1 — 26 October 2026
 
 The notes for the 22 and 23 October updates now describe those changes in plain English. Nothing on the website has changed.
