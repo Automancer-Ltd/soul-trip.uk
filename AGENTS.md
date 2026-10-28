@@ -11,6 +11,7 @@
 
 ```bash
 checkq -- ./scripts/check        # everything CI runs, about 15 s: config, manifest, site contract C1-C8, Sentry SRI and privacy, verifier self-proof, negative controls
+node scripts/journey.mjs --out DIR   # browser journey + screenshots on the staged tree (needs playwright-core via PLAYWRIGHT_CORE_DIR, Chrome via CHROME_PATH); CI runs it
 node scripts/generate-manifest.mjs   # after `git add` of any served-file change
 .agents/skills/verify-soul-trip-uk/scripts/drive-enquiry.sh   # real browser walk of the enquiry form on a local copy; Formspree is stubbed, nothing is sent
 node scripts/verify-production.mjs --base https://soul-trip.uk/   # live site serves exactly this tree
