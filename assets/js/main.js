@@ -48,6 +48,14 @@
       setMenu(false);
     }
   });
+  // Tabbing out of the open menu closes it, so it never covers the focused link.
+  nav.addEventListener("focusout", function (e) {
+    var next = e.relatedTarget;
+    if (nav.classList.contains("is-open") && next &&
+        !navLinks.contains(next) && !toggle.contains(next)) {
+      setMenu(false);
+    }
+  });
   // Close on Escape
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape" && nav.classList.contains("is-open")) {
