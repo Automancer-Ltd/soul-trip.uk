@@ -12,9 +12,9 @@
 - [`scripts/generate-manifest.mjs`](scripts/generate-manifest.mjs) computes the SHA-256 of every non-excluded served path in canonical sorted order and writes [`site-manifest.json`](site-manifest.json).
 - [`scripts/check-manifest.mjs`](scripts/check-manifest.mjs) verifies in read-only mode that `site-manifest.json` matches the working tree byte-for-byte and that no untracked non-ignored served files make the tree ambiguous.
 
-## 3. Eight Static Site-Contract Invariants (`scripts/check-site.mjs`)
+## 3. Nine Static Site-Contract Invariants (`scripts/check-site.mjs`)
 
-[`scripts/check-site.mjs`](scripts/check-site.mjs) enforces eight named checks (`C1`–`C8`):
+[`scripts/check-site.mjs`](scripts/check-site.mjs) enforces nine named checks (`C1`–`C9`):
 - **C1 (`internal references & fragment anchors`):** Every internal `href`, `src`, `srcset`, and `og:image` resolves to a served file, every `#fragment` resolves to an `id`/`name` in `index.html`, and any `#fragment?query` has a matching JS intercept in `assets/js/main.js`.
 - **C2 (`image alt text`):** Every `<img>` has a non-empty `alt` attribute.
 - **C3 (`enquiry form wiring`):** Exactly one `<form method="POST">` posting over HTTPS to an allowlisted Formspree host (`FORMSPREE_HOSTS`), containing honeypot `input[name="_gotcha"]`, required labelled fields (`name`, `phone`, `email`, `type`), `#form-success` and `#form-error` panels, `select#type` starting with a disabled empty placeholder option, classified service CTAs, and `assets/js/main.js` bindings (`REQUIRED_JS_SNIPPETS` + `showEnquirySuccess` honeypot parity).
@@ -23,6 +23,7 @@
 - **C6 (`favicon / robots / sitemap references`):** All favicon links, `robots.txt` `Sitemap:` directives, and `sitemap.xml` `<loc>` URLs resolve to served files.
 - **C7 (`structural a11y regressions`):** All headings inside `<footer>` are `<h3>` (preserving `h1 -> h2 -> h3` outline), and the single `.wa-float` link sits inside `<footer>`, is keyboard-focusable, and has a non-empty `aria-label`.
 - **C8 (`privacy disclosure`):** `#privacy` names `Formspree` and `Sentry` (`error monitoring`) and is linked from both inside `<form>` and inside `<footer>`.
+- **C9 (`not-found page`):** `404.html` is served (GitHub Pages returns it for every missing path), every internal reference in it is root-absolute and resolves to a served file, it links to `/#enquiry`, and it carries `<meta name="robots" content="noindex">`.
 
 ## 4. Sentry SRI & Privacy Contract (`scripts/check-sentry-integration.mjs`)
 

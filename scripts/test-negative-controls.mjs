@@ -145,7 +145,7 @@ await test("T01", "clean tree is green: every site-contract check passes on the 
   }
 });
 
-await test("T02", "sabotage: removing the .ico icon makes C1 AND C6 fail naming it", async () => {
+await test("T02", "sabotage: removing the .ico icon makes C1, C6 AND C9 fail naming it", async () => {
   const dir = await makeCopy("soultrip-negctl-iconrm-");
   try {
     await rm(path.join(dir, "favicon.ico"));
@@ -156,9 +156,10 @@ await test("T02", "sabotage: removing the .ico icon makes C1 AND C6 fail naming 
     return {
       pass:
         r.code === 1 &&
-        bullets.length === 2 &&
+        bullets.length === 3 &&
         /missing "favicon\.ico"/.test(r.out) &&
-        /favicon asset "\/favicon\.ico" .* not present/.test(r.out),
+        /favicon asset "\/favicon\.ico" .* not present/.test(r.out) &&
+        /404\.html line \d+: "\/favicon\.ico" does not resolve/.test(r.out),
       evidence: `exit=${r.code}, ${bullets.length} violation(s)`
     };
   } finally {
@@ -1137,6 +1138,42 @@ await test("T58", "behaviour: failed enquiry fetch reports safe error classes wi
     pass,
     evidence: `names=${JSON.stringify(names)}, noPii=${noPii}, recovered=${allRecovered}`
   };
+});
+
+await test("T59", "sabotage: 404.html stylesheet made relative (breaks at nested missing paths) → C9 names the relative reference", async () => {
+  const dir = await makeCopy("soultrip-negctl-404rel-");
+  try {
+    await sabotageInCopy(dir, "404.html", [['href="/assets/css/styles.css"', 'href="assets/css/styles.css"']]);
+    const r = await checkSite(dir);
+    return {
+      pass: r.code === 1 && /\[C9\][\s\S]*"assets\/css\/styles\.css" is relative/.test(r.out),
+      evidence: `exit=${r.code}`
+    };
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+await test("T60", "sabotage: 404.html deleted or its enquiry link dropped → C9 names each", async () => {
+  const gone = await makeCopy("soultrip-negctl-404gone-");
+  const noLink = await makeCopy("soultrip-negctl-404link-");
+  try {
+    await rm(path.join(gone, "404.html"));
+    const untrack = spawnSync("git", ["rm", "--cached", "--quiet", "404.html"], { cwd: gone });
+    if (untrack.status !== 0) return { pass: false, evidence: `git rm --cached failed in copy: ${untrack.stderr}` };
+    await sabotageInCopy(noLink, "404.html", [['href="/#enquiry"', 'href="/"']]);
+    const a = await checkSite(gone);
+    const b = await checkSite(noLink);
+    return {
+      pass:
+        a.code === 1 && /404\.html is missing from the served tree/.test(a.out) &&
+        b.code === 1 && /404\.html has no link to "\/#enquiry"/.test(b.out),
+      evidence: `missing exit=${a.code}, no-link exit=${b.code}`
+    };
+  } finally {
+    await rm(gone, { recursive: true, force: true });
+    await rm(noLink, { recursive: true, force: true });
+  }
 });
 
 console.log("\nnegative-control suite results:");
