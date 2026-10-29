@@ -11,7 +11,7 @@
     "assets/fonts/playfair-display-OFL.txt": "566be814f8e96e93dfa16101331557eb6b5467e9e03f627c0910fe93ca12300e",
     "assets/fonts/playfair-display-italic-latin.woff2": "54af24bd0f911f0fd7399d5445ea2023ff501d6a69f2d728f1213072f977ab14",
     "assets/fonts/playfair-display-latin.woff2": "e0c764a8e9e1cce92163c55bac4b2ad6cd4cf8c696ce2289ab5c41565e65b7e2",
-    "assets/js/main.js": "824237df88b2918ca4bb48ca9dfdc1cbc35808ccd82d52cba45ab5cf693034ab",
+    "assets/js/main.js": "ffc92cf94ef28d6e952ce219a6da241f37fb4e0fdcb85139bd34aed2db0c542e",
     "assets/js/sentry-init.js": "d5462a63a25e9d4b56e18b191945ac6303bf53eeb896d26784b0d565bbcac2e7",
     "assets/js/vendor/sentry-10.66.0.bundle.min.js": "36bc7ded33c40e8fa5fea2ba6e9943c1598fb80ffee5436b2bdc2511a11fe24b",
     "deploy.json": "3984f0d0aa4fa585e4cd37f7462443d07bdee54febaa04f7008f92d5ef750a82",
@@ -61,7 +61,7 @@
     "images/hajj-umrah/makkah-clock-tower-aerial-sunset-480.webp": "b45e54b7d2503b284feee3c872d40761fccce3c797ca61d747e6ab191721d0d9",
     "images/hajj-umrah/makkah-clock-tower-aerial-sunset-960.webp": "b2f3b2688623405e17a87e777d34818cba6e4ebcdc4b473cc1506b9165133c67",
     "images/hajj-umrah/og-kaaba-1200x630.jpg": "491c1021ee5022d392765621db41af295bf96be613d143ca06add011c22e1907",
-    "index.html": "55bc68422c6760f07264592d2c1572e053c04fb6c2ad0fdc1bb3e5ed0c14566d",
+    "index.html": "d279362461c925e8e384f6ee6744f5348cfb6ecbb315cd2373ee24e8743e655c",
     "robots.txt": "8ef280707d4f1a427b42061f7dd9c30d5714d877f52fd184c06cfb418128a45d",
     "sitemap.xml": "498f6ecdc4b253762167269fdc7daf3229931f6ed30b452a740b5de71faf266d"
   }

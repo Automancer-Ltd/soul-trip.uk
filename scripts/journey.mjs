@@ -141,6 +141,27 @@ try {
     check("honeypot filled: nothing sent", posts.length === 0, `${posts.length}`);
     await ctx.close();
   }
+
+  // 5. Phone menu by keyboard: Tab after opening reaches the menu links, and leaving the menu closes it.
+  {
+    const { ctx, page } = await newPage({ width: 390, height: 844 }, "ok");
+    const isOpen = () => page.evaluate(() => document.getElementById("nav").classList.contains("is-open"));
+    const focusedHref = () => page.evaluate(() => document.activeElement.getAttribute("href"));
+    await page.focus("#nav-toggle");
+    await page.keyboard.press("Enter");
+    const links = await page.locator("#nav-links a").evaluateAll((as) => as.map((a) => a.getAttribute("href")));
+    const reached = [];
+    for (let i = 0; i < links.length; i++) {
+      await page.keyboard.press("Tab");
+      reached.push(await focusedHref());
+    }
+    check("phone menu: Tab walks the open menu links in order", JSON.stringify(reached) === JSON.stringify(links), `${reached} vs ${links}`);
+    check("phone menu: stays open while focus is inside", await isOpen());
+    await page.keyboard.press("Tab");
+    const outside = await page.evaluate(() => !document.getElementById("nav").contains(document.activeElement));
+    check("phone menu: tabbing past the last link closes it", outside && !(await isOpen()), `outside=${outside}`);
+    await ctx.close();
+  }
 } finally {
   await browser.close();
   server.close();
