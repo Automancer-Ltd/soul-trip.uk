@@ -1,5 +1,10 @@
 # Release notes
 
+## v2026.11.01.1 — 1 November 2026
+
+### Behind the scenes
+
+- Internal plumbing maintenance; no user-facing behaviour changed. <!-- commits: 1 -->
 ## v2026.10.28.2 — 28 October 2026
 
 ### Behind the scenes
