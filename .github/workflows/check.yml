@@ -51,7 +51,7 @@ jobs:
           fetch-depth: 0
 
       - name: check unbounded outside calls
-        uses: Automancer-Ltd/estate-checks@d5f9c888a1ea5580db9f7a9f380b059ffeaaddce # v1.2.1
+        uses: Automancer-Ltd/estate-checks@292dae810141d8a526e5b1ef4247fecebf02112b # v1.7.16
         with:
           exclude-paths: "scripts/test-negative-controls.mjs"
 
@@ -101,7 +101,7 @@ jobs:
           PLAYWRIGHT_CORE_DIR="$RUNNER_TEMP/pw" node scripts/journey.mjs --out "$RUNNER_TEMP/journey"
 
       - if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: journey-screenshots
           path: ${{ runner.temp }}/journey
