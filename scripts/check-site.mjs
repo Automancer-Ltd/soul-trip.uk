@@ -512,6 +512,45 @@ if (css !== null) {
   }
 }
 
+// GitHub Pages answers every missing path with 404.html, at whatever depth the
+// visitor asked for, so a relative reference would break on /old/page.
+const notFoundHtml = await loadText("404.html");
+if (notFoundHtml === null || !servedSet.has("404.html")) {
+  fail("C9", "404.html is missing from the served tree; a broken link would show GitHub's generic error page");
+} else {
+  const notFound = scanHtml(notFoundHtml);
+  const notFoundLinks = [];
+  for (const { name, attrs, line } of notFound.tags) {
+    const attr = name === "link" || name === "a" ? "href" : name === "img" || name === "script" || name === "source" ? "src" : null;
+    if (!attr || typeof attrs[attr] !== "string") continue;
+    const value = attrs[attr];
+    const target = resolveTarget(value);
+    if (target.type === "external") continue;
+    if (target.type !== "file") {
+      fail("C9", `404.html line ${line}: "${value}" is not a resolvable URL`);
+      continue;
+    }
+    if (!/^(\/|https?:\/\/)/i.test(value.trim())) {
+      fail("C9", `404.html line ${line}: "${value}" is relative; it breaks when the page is served at a nested missing path`);
+    }
+    const relPath = target.relPath || "index.html";
+    if (!servedSet.has(relPath)) {
+      fail("C9", `404.html line ${line}: "${value}" does not resolve to a served file (missing "${relPath}")`);
+    }
+    if (relPath === "index.html" && target.frag && !ids.has(target.frag.split("?")[0])) {
+      fail("C9", `404.html line ${line}: anchor "#${target.frag}" has no matching id/name in index.html`);
+    }
+    if (name === "a") notFoundLinks.push({ relPath, frag: target.frag });
+  }
+  if (!notFoundLinks.some((l) => l.relPath === "index.html" && l.frag === "enquiry")) {
+    fail("C9", '404.html has no link to "/#enquiry"; a visitor on a broken link loses the way to the enquiry form');
+  }
+  const robots = notFound.tags.find((t) => t.name === "meta" && (t.attrs.name || "").toLowerCase() === "robots");
+  if (!robots || !/noindex/i.test(robots.attrs.content || "")) {
+    fail("C9", '404.html has no <meta name="robots" content="noindex">; search engines could index the error page');
+  }
+}
+
 const CHECK_LABELS = {
   C1: "internal references & fragment anchors",
   C2: "image alt text",
@@ -520,7 +559,8 @@ const CHECK_LABELS = {
   C5: "WCAG AA theme colour pairs",
   C6: "favicon / robots / sitemap references",
   C7: "structural a11y regressions (footer heading level, floating WhatsApp landmark/focus/label) — regression coverage, not an axe substitute",
-  C8: "privacy disclosure (#privacy names the form service and the error monitor, linked from the form and footer)"
+  C8: "privacy disclosure (#privacy names the form service and the error monitor, linked from the form and footer)",
+  C9: "not-found page (404.html resolves from any path, links to the enquiry form, is not indexed)"
 };
 
 const byCheck = new Map();

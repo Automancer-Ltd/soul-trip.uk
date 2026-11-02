@@ -35,7 +35,11 @@ const server = createServer((rq, rs) => {
     if (!f.startsWith(SITE) || !statSync(f).isFile()) throw new Error("nf");
     rs.writeHead(200, { "content-type": TYPES[extname(f)] || "application/octet-stream" });
     rs.end(readFileSync(f));
-  } catch { rs.writeHead(404); rs.end("not found"); }
+  } catch {
+    // GitHub Pages answers every missing path with the site's 404.html.
+    rs.writeHead(404, { "content-type": "text/html" });
+    rs.end(readFileSync(join(SITE, "404.html")));
+  }
 });
 await new Promise((r) => server.listen(0, "127.0.0.1", r));
 const BASE = `http://127.0.0.1:${server.address().port}/`;
@@ -139,6 +143,24 @@ try {
     await page.click("#submit-btn");
     await page.waitForTimeout(1200);
     check("honeypot filled: nothing sent", posts.length === 0, `${posts.length}`);
+    await ctx.close();
+  }
+
+  // 5. A broken or old link: the visitor stays on a SoulTrip page that leads back to the enquiry form.
+  for (const [label, vp] of [["desktop", { width: 1366, height: 900 }], ["mobile", { width: 390, height: 844 }]]) {
+    const { ctx, page, problems } = await newPage(vp, "ok");
+    const missing = [];
+    page.on("response", (r) => { if (r.status() >= 400 && r.request().resourceType() !== "document") missing.push(`${r.status()} ${r.url()}`); });
+    const res = await page.goto(BASE + "old/hajj-packages/2025", { waitUntil: "load" });
+    check(`not found ${label}: answers 404 with the SoulTrip page`, res.status() === 404 && /SoulTrip/.test(await page.title()), `${res.status()} ${await page.title()}`);
+    check(`not found ${label}: styles, fonts and icons load from a nested path`, missing.length === 0, missing.join(", "));
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+    check(`not found ${label}: no horizontal overflow`, overflow <= 1, `${overflow}px`);
+    await page.screenshot({ path: join(OUT, `not-found-${label}.png`), fullPage: true });
+    await page.click('a[href="/#enquiry"]');
+    await page.waitForURL(BASE + "#enquiry");
+    check(`not found ${label}: enquiry link reaches the form`, await visible(page, "#enquiry-form"));
+    check(`not found ${label}: no page errors`, problems.length === 0, problems.join(" | "));
     await ctx.close();
   }
 } finally {
